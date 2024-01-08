@@ -1,11 +1,16 @@
-//sign in 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from "react";
-// import { db, auth } from './../firebase';
+import { auth } from './../firebase';
 
 function SignIn() {
+  const [signUpSuccess, setSignUpSuccess] = useState(null);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [signInSuccess, setSignInSuccess] = useState(null);
+  const [signOutSuccess, setSignOutSuccess] = useState(null);
   const [showSignUp, setShowSignUp] = useState(false);
+  const navigate = useNavigate();
+
   function doSignUp(e) {
     e.preventDefault();
     const email = e.target.email.value;
@@ -13,30 +18,32 @@ function SignIn() {
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        setSignUpSuccess(`You've successfully signed up!`)
+        setSignUpSuccess(`You've successfully signed up, ${userCredential.user.email}!`);
+        setSignInSuccess(null);
         navigate('/dashBoard');
       })
       .catch((error) => {
-        setSignUpSuccess(`There was an error signing up: ${error.message}!`)
+        setSignUpSuccess(`There was an error signing up: ${error.message}!`);
       });
   }
 
-
   function doSignIn(e) {
-
     e.preventDefault();
     const email = e.target.signinEmail.value;
-    const password = e.target.signinPassword.value;;
+    const password = e.target.signinPassword.value;
+
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        setSignInSuccess(`You've successsfully sign in as  ${userCredential.user.email}!`)
+        setSignInSuccess(`You've successfully signed in as ${userCredential.user.email}!`);
+        setSignUpSuccess(null);
         setIsSignedIn(true);
         navigate('/dashBoard');
       })
       .catch((error) => {
-        setSignInSuccess(`There was an error signing in: ${error.message}!`)
+        setSignInSuccess(`There was an error signing in: ${error.message}!`);
       });
   }
+
   function doSignOut() {
     signOut(auth)
       .then(function () {
@@ -49,16 +56,14 @@ function SignIn() {
   }
 
   return (
-
     <React.Fragment>
-
       <h1>Sign In</h1>
+      {signInSuccess}
       <form onSubmit={doSignIn}>
         <input
           type='text'
           name='signinEmail'
           placeholder='email' />
-
         <br />
         <input
           type='password'
@@ -69,6 +74,7 @@ function SignIn() {
       </form>
 
       <h1>Sign Out</h1>
+      {signOutSuccess}
       <br />
       <button onClick={doSignOut}>Sign out</button>
 
@@ -77,7 +83,7 @@ function SignIn() {
       <button onClick={() => setShowSignUp(!showSignUp)}>Create an account</button>
       {showSignUp && (
         <form onSubmit={doSignUp}>
-          <h1>Sign up</h1>
+          {signUpSuccess}
           <input
             type='text'
             name='email'
@@ -96,4 +102,5 @@ function SignIn() {
     </React.Fragment>
   );
 }
+
 export default SignIn;
