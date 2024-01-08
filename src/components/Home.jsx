@@ -2,12 +2,10 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from "react";
-//import { auth } from './../firebase';
+// import { db, auth } from './../firebase';
 
 function SignIn() {
-
-
-
+  const [showSignUp, setShowSignUp] = useState(false);
   function doSignUp(e) {
     e.preventDefault();
     const email = e.target.email.value;
@@ -55,7 +53,6 @@ function SignIn() {
     <React.Fragment>
 
       <h1>Sign In</h1>
-      {/* {signInSuccess} */}
       <form onSubmit={doSignIn}>
         <input
           type='text'
@@ -72,7 +69,6 @@ function SignIn() {
       </form>
 
       <h1>Sign Out</h1>
-      {/* {signOutSuccess} */}
       <br />
       <button onClick={doSignOut}>Sign out</button>
 
@@ -82,7 +78,6 @@ function SignIn() {
       {showSignUp && (
         <form onSubmit={doSignUp}>
           <h1>Sign up</h1>
-          {/* {signUpSuccess} */}
           <input
             type='text'
             name='email'
