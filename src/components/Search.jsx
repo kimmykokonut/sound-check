@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 
 
-
-
 function Search(){
   const [access_token, setAccessToken] = useState("");
 
@@ -16,9 +14,10 @@ function Search(){
     }
     fetch('https://accounts.spotify.com/api/token', authParameters)
     .then(result => result.json())
-    .then(data => setAccessToken(data.access_token))
+    .then(data => setAccessToken(data))
     console.log(access_token)
-    console.log(data.access_token)
+    console.log(data)
+   
   }, [])
 
 }
