@@ -2,6 +2,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } f
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from "react";
 import { auth } from './../firebase';
+import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
 
 function SignIn() {
   const [signUpSuccess, setSignUpSuccess] = useState(null);
@@ -15,13 +16,19 @@ function SignIn() {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
+    const username = e.target.username.value;
+    const city = e.target.city.value;
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        setSignUpSuccess(`You've successfully signed up, ${userCredential.user.email}!`);
-        setSignInSuccess(null);
-        navigate('/dashBoard');
-      })
+    .then((userCredential) => {
+      const user = userCredential.user;
+      const db = getFirestore();
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, { username, city });  
+      setSignUpSuccess(`You've successfully signed up, ${userCredential.user.email}!`);
+      setSignInSuccess(null);
+      navigate('/dashBoard');
+    })
       .catch((error) => {
         setSignUpSuccess(`There was an error signing up: ${error.message}!`);
       });
@@ -89,8 +96,19 @@ function SignIn() {
             name='email'
             placeholder="email" />
           <br />
+          <input
+            type='text'
+            name='username'
+            placeholder="Username" />
+          <br />
+          <input
+            type='text'
+            name='city'
+            placeholder="City" />
+          <br />
           <label>
-            <input minLength="6"
+            <input
+              minLength="6"
               type='password'
               name='password'
               placeholder="Password" />
