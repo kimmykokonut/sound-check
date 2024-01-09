@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+import loading from './assets/img/loading.gif'
 
 export const UserDashboard = () => {
     const [error, setError] = useState(null);
@@ -175,7 +176,7 @@ export const UserDashboard = () => {
                     </tbody>
                     </table>
                 ) : (
-                    <div>Loading...</div>
+                    <img src={loading} alt='loading' />
                 )}
             </div>
         </>

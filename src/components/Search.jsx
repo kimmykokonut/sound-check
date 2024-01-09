@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth, db } from '../firebase';
+import { useNavigate } from 'react-router-dom';
 import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 
 
@@ -9,6 +10,8 @@ function Search() {
   const [artists, setArtists] = useState([]);
   const [displayName, setDisplayName] = useState('');
   const [followingArtists, setFollowingArtists] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const authParameters = {
@@ -140,6 +143,10 @@ function Search() {
     }
   };
 
+  const goToDashboard = () => {
+    navigate('/UserDashboard');
+  }
+
   return (
     <>
       <h2>UserId: {displayName}</h2>
@@ -171,6 +178,7 @@ function Search() {
           </tbody>
         </table>
       </div>
+      <button type="click" onClick={goToDashboard}>View Dashboard</button>
     </>
   );
 }
