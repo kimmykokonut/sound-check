@@ -50,12 +50,13 @@ function SignIn() {
       }
       setSignUpSuccess(`You've successfully signed up, ${user.email}!`);
       setSignInSuccess(null);
-      setIsSignedIn(true);
-      navigate('/UserDashboard');
-    } catch (error) {
-      setSignUpSuccess(`There was an error signing up: ${error.message}!`);
-    }
-  };
+
+      navigate('/userDashboard');
+    })
+      .catch((error) => {
+        setSignUpSuccess(`There was an error signing up: ${error.message}!`);
+      });
+  }
 
   const doSignIn = async (e) => {
     e.preventDefault();
@@ -67,7 +68,7 @@ function SignIn() {
       setSignInSuccess(`You've successfully signed in as ${userCredential.user.email}!`);
       setSignUpSuccess(null);
       setIsSignedIn(true);
-      navigate('/UserDashboard');
+      navigate('/userDashboard');
     } catch (error) {
       setSignInSuccess(`There was an error signing in: ${error.message}!`);
     }
