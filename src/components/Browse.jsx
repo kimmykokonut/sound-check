@@ -3,6 +3,8 @@ import { geoStateIso } from "../city-state-data";
 import { getCityId, getShowsById } from "../fetchData";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
+
 
 function Browse() {
   const navigate = useNavigate();
@@ -17,7 +19,6 @@ function Browse() {
     const checkCurrentUser = async () => {
       try {
         auth.onAuthStateChanged((user) => {
-          console.log(user);
           if (user) {
             setDisplayName(user.email || '');
           }
@@ -31,29 +32,67 @@ function Browse() {
     checkCurrentUser();
   }, []);
 
-  useEffect(() => { //this is for Portland OR API call
-    fetch(`https://www.jambase.com/jb-api/v1/events?perPage=5&geoCityId=jambase%3A4247192&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-      },
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`${response.status}: ${response.statusText}`);
-        } else {
-          return response.json()
-        }
-      })
-      .then((jsonifiedResponse) => {
-        setEventsNearby(jsonifiedResponse.events)
-        setIsLoaded(true)
-      })
-      .catch((error) => {
-        setError(error)
-        setIsLoaded(true)
-      });
-  }, [])
+  //this currently defaults to Pdx shows until we can get user db input state as 'US-CT' format
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        auth.onAuthStateChanged(async (user) => {
+          if (user) {
+            setDisplayName(user.email || '');
+            const userId = user.uid;
+            const userRef = doc(db, 'users', userId);
+            const userSnapshot = await getDoc(userRef);
+            console.log(userSnapshot);
+
+            if (userSnapshot.exists()) {
+              const userData = userSnapshot.data();
+              console.log(userData.city);
+              //call api call by city/state here?
+              //add to city once state is set: userData.city ||
+              const city = 'Portland'
+              setSelectCity(city);
+              const state = userData.state || 'US-OR';
+              setSelectedState(state);
+              const jamID = await getCityId(city, state);
+              const finalResult = await getShowsById(jamID);
+              setEventsNearby(finalResult);
+            } else {
+              console.log("User not found!");
+            }
+          }
+          setIsLoaded(true);
+        });
+      } catch (error) {
+        setError(error.message);
+        setIsLoaded(true);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // useEffect(() => { //this is for Portland OR API call
+  //   fetch(`https://www.jambase.com/jb-api/v1/events?perPage=5&geoCityId=jambase%3A4247192&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'Accept': 'application/json',
+  //     },
+  //   })
+  //     .then(response => {
+  //       if (!response.ok) {
+  //         throw new Error(`${response.status}: ${response.statusText}`);
+  //       } else {
+  //         return response.json()
+  //       }
+  //     })
+  //     .then((jsonifiedResponse) => {
+  //       setEventsNearby(jsonifiedResponse.events)
+  //       setIsLoaded(true)
+  //     })
+  //     .catch((error) => {
+  //       setError(error)
+  //       setIsLoaded(true)
+  //     });
+  // }, [])
 
   async function handleClick(e) {
     e.preventDefault();
@@ -84,7 +123,7 @@ function Browse() {
           <form>
             <input
               name="city"
-              placeholder="my city..."
+              placeholder="city name..."
               type="text"
               onChange={handleChange}>
             </input>
@@ -99,7 +138,7 @@ function Browse() {
               })};
             </select>
             <br />
-            <button onClick={handleClick}>show me shows near me</button>
+            <button onClick={handleClick}>show me shows</button>
           </form>
           <hr />
           <h3>Who's coming to {selectCity}?</h3>
