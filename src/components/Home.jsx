@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
+import { geoStateIso } from "../city-state-data";
 import { useNavigate } from 'react-router-dom';
 import { auth } from './../firebase';
 import './SignIn.css';
@@ -36,6 +37,7 @@ function SignIn() {
     const password = e.target.password.value;
     const username = e.target.username.value;
     const city = e.target.city.value;
+    const state = e.target.state.value;
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -48,9 +50,9 @@ function SignIn() {
         const storageRef = ref(storage, `profile_images/${user.uid}`);
         await uploadBytes(storageRef, profileImage);
         const imageUrl = await getDownloadURL(storageRef);
-        await setDoc(userDocRef, { username, city, profileImage: imageUrl });
+        await setDoc(userDocRef, { username, city, profileImage: imageUrl, state });
       } else {
-        await setDoc(userDocRef, { username, city });
+        await setDoc(userDocRef, { username, city, state });
       }
       setSignUpSuccess(`You've successfully signed up, ${user.email}!`);
       setSignInSuccess(null);
@@ -158,6 +160,15 @@ function SignIn() {
             name='city'
             placeholder="City" />
           <br />
+          <label htmlFor="state">State: </label>
+            <select id="state" name="state">
+              {Object.keys(geoStateIso).map(key => {
+                return (
+                  <option name="state" value={key} key={key}>{geoStateIso[key]}
+                  </option>
+                );
+              })};
+            </select>
           <label>
             Profile Image:
             <input
