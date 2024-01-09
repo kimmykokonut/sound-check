@@ -3,6 +3,7 @@ import { auth, db } from '../firebase';
 import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import loading from './assets/img/loading.gif'
 import { useNavigate } from 'react-router-dom';
+import { getCityId } from '../fetchData';
 
 export const UserDashboard = () => {
     const [error, setError] = useState(null);
@@ -12,6 +13,8 @@ export const UserDashboard = () => {
     const [artistArray, setArtistArray] = useState([]);
     const [followingArtists, setFollowingArtists] = useState([]);
     const [username, setUsername] = useState('');
+    const [city, setCity] = useState('')
+    const [state, setState] = useState('')
 
     const navigate = useNavigate();
 
@@ -30,6 +33,8 @@ export const UserDashboard = () => {
                             setArtistArray(userData.followedArtists || []);
                             setFollowingArtists(userData.followedArtists || []);
                             setUsername(userData.username)
+                            setCity(userData.city)
+                            setState(userData.state)
                         } else {
                             console.log("User not found!");
                         }
@@ -45,8 +50,9 @@ export const UserDashboard = () => {
     }, []);
 
     const fetchShows = async (bandName) => {
+        const cityCode = await getCityId(city, state)
         try {
-            const response = await fetch(`https://www.jambase.com/jb-api/v1/events?artistName=${bandName}&geoCityId=jambase%3A4247192&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`);
+            const response = await fetch(`https://www.jambase.com/jb-api/v1/events?artistName=${bandName}&geoCityId=${cityCode}&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`);
             if (!response.ok) {
                 throw new Error(`${response.status}: ${response.statusText}`);
             }
