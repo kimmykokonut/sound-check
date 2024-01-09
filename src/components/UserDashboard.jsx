@@ -2,25 +2,17 @@ import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import loading from './assets/img/loading.gif'
+import { useNavigate } from 'react-router-dom';
 
 export const UserDashboard = () => {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [results, setResults] = useState([]);
-    const [band, setBand] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [artistArray, setArtistArray] = useState([]);
     const [followingArtists, setFollowingArtists] = useState([]);
 
-    const followedBands = {
-        0: "Radiohead",
-        1: "Dinosaur Jr",
-        2: "Pixies",
-        3: "Dessa",
-        4: "Sleater-Kinney",
-        5: "Smashing Pumpkins",
-        6: "Blink-182",
-    }
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -110,6 +102,7 @@ export const UserDashboard = () => {
 
     useEffect(() => {
         fetchShowsForAllBands();
+        console.log(auth.currentUser)
     }, [artistArray]);
 
     if (!auth.currentUser) {
@@ -144,6 +137,10 @@ export const UserDashboard = () => {
         }
     };
 
+    const goToSearch = () => {
+        navigate('/search');
+    }
+
     return (
         <>
             <div>
@@ -159,26 +156,27 @@ export const UserDashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                        {artistArray.map((artist, index) => {
-                            const bandResult = results[index] || {};
-                            const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : 'N/A';
-                            return followingArtists.includes(artist) ? (
-                                <tr key={index}>
-                                    <td>{artist}</td>
-                                    <td>{formattedDate}</td>
-                                    <td>{bandResult.location ? bandResult.location.name : 'N/A'}</td>
-                                    <td>
-                                        <button onClick={() => handleUnfollow(artist)}>Unfollow</button>
-                                    </td>
-                                </tr>
-                            ) : null;
-                        })}
-                    </tbody>
+                            {artistArray.map((artist, index) => {
+                                const bandResult = results[index] || {};
+                                const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : 'N/A';
+                                return followingArtists.includes(artist) ? (
+                                    <tr key={index}>
+                                        <td>{artist}</td>
+                                        <td>{formattedDate}</td>
+                                        <td>{bandResult.location ? bandResult.location.name : 'N/A'}</td>
+                                        <td>
+                                            <button onClick={() => handleUnfollow(artist)}>Unfollow</button>
+                                        </td>
+                                    </tr>
+                                ) : null;
+                            })}
+                        </tbody>
                     </table>
                 ) : (
                     <img src={loading} alt='loading' />
                 )}
             </div>
+            <button type="click" onClick={goToSearch}>Find New Artists</button>
         </>
     );
 };
