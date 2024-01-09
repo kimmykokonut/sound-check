@@ -27,7 +27,7 @@ function SignIn() {
       setDoc(userDocRef, { username, city });  
       setSignUpSuccess(`You've successfully signed up, ${userCredential.user.email}!`);
       setSignInSuccess(null);
-      navigate('/dashBoard');
+      navigate('/userDashboard');
     })
       .catch((error) => {
         setSignUpSuccess(`There was an error signing up: ${error.message}!`);
@@ -44,7 +44,7 @@ function SignIn() {
         setSignInSuccess(`You've successfully signed in as ${userCredential.user.email}!`);
         setSignUpSuccess(null);
         setIsSignedIn(true);
-        navigate('/dashBoard');
+        navigate('/userDashboard');
       })
       .catch((error) => {
         setSignInSuccess(`There was an error signing in: ${error.message}!`);

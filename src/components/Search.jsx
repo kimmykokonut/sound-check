@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
+import { auth, db } from '../firebase';
+import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+
 
 function Search() {
   const [access_token, setAccessToken] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [artists, setArtists] = useState([]);
+  const [displayName, setDisplayName] = useState('');
+  const [followingArtists, setFollowingArtists] = useState([]);
 
   useEffect(() => {
     const authParameters = {
@@ -48,8 +53,98 @@ function Search() {
     await searchSpotify();
   };
 
+  useEffect(() => {
+    const checkCurrentUser = async () => {
+      try {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            setDisplayName(user.uid || '');
+          }
+        });
+      } catch (error) {
+        setError(error.message);
+        setIsLoaded(true);
+      }
+    };
+
+    checkCurrentUser();
+  }, []);
+
+  const handleFollow = async (artistName) => {
+    try {
+      const userId = displayName;
+      const userRef = doc(db, 'users', userId);
+    
+      await updateDoc(userRef, {
+        followedArtists: arrayUnion(artistName)
+      });
+      const userSnapshot = await getDoc(userRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        console.log(`${artistName} followed by ${userId}`);
+        console.log("User's list of followed artists:", userData.followedArtists);
+      } else {
+        console.log("User not found!");
+      }
+    } catch (error) {
+      console.error('Error updating document:', error);
+    }
+  };
+
+  const handleUnfollow = async (artistName) => {
+    try {
+      const userId = displayName;
+      const userRef = doc(db, 'users', userId);
+      
+      await updateDoc(userRef, {
+        followedArtists: arrayRemove(artistName)
+      });
+      const userSnapshot = await getDoc(userRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        console.log(`${artistName} unfollowed by ${userId}`);
+        console.log("User's updated list of followed artists:", userData.followedArtists);
+      } else {
+        console.log("User not found!");
+      }
+    } catch (error) {
+      console.error('Error updating document:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchFollowingArtists = async () => {
+      try {
+        const userId = displayName;
+        const userRef = doc(db, 'users', userId);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          setFollowingArtists(userData.followedArtists || []);
+        }
+      } catch (error) {
+        console.error('Error fetching followed artists:', error);
+      }
+    };
+  
+    fetchFollowingArtists();
+  }, [displayName]);
+
+  const isFollowing = (artistName) => {
+    return followingArtists.includes(artistName);
+  };
+
+  const handleButtonClick = (artistName) => {
+    if (isFollowing(artistName)) {
+      handleUnfollow(artistName);
+    } else {
+      handleFollow(artistName);
+    }
+  };
+
   return (
     <>
+      <h2>UserId: {displayName}</h2>
       <form onSubmit={handleSubmit}>
         <input type='text' placeholder='Search for artists' onChange={handleSearchInput} />
         <button type='submit'>Search</button>
@@ -57,11 +152,26 @@ function Search() {
 
       <div>
         <h2>Results:</h2>
-        <ul>
-          {artists.map(artist => (
-            <li key={artist.id}>{artist.name}</li>
-          ))}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>Artist</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {artists.map(artist => (
+              <tr key={artist.id}>
+              <td>{artist.name}</td>
+              <td>
+                <button onClick={() => handleButtonClick(artist.name)}>
+                  {isFollowing(artist.name) ? 'Unfollow' : 'Follow'}
+                </button>
+              </td>
+            </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
