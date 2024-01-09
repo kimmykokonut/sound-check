@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 import { auth } from './../firebase';
 import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
@@ -50,13 +50,12 @@ function SignIn() {
       }
       setSignUpSuccess(`You've successfully signed up, ${user.email}!`);
       setSignInSuccess(null);
-
-      navigate('/userDashboard');
-    })
-      .catch((error) => {
-        setSignUpSuccess(`There was an error signing up: ${error.message}!`);
-      });
-  }
+      setIsSignedIn(true);
+      navigate('/UserDashboard');
+    } catch (error) {
+      setSignUpSuccess(`There was an error signing up: ${error.message}!`);
+    }
+  };
 
   const doSignIn = async (e) => {
     e.preventDefault();
@@ -68,9 +67,23 @@ function SignIn() {
       setSignInSuccess(`You've successfully signed in as ${userCredential.user.email}!`);
       setSignUpSuccess(null);
       setIsSignedIn(true);
-      navigate('/userDashboard');
+      navigate('/UserDashboard');
     } catch (error) {
       setSignInSuccess(`There was an error signing in: ${error.message}!`);
+    }
+  };
+
+  const doGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const userCredential = await signInWithPopup(auth, provider);
+      setSignInSuccess(`You've successfully signed in with Google as ${userCredential.user.email}!`);
+      setSignUpSuccess(null);
+      setIsSignedIn(true);
+      navigate('/UserDashboard');
+    } catch (error) {
+      setSignInSuccess(`There was an error signing in with Google: ${error.message}!`);
     }
   };
 
@@ -102,23 +115,27 @@ function SignIn() {
             placeholder='password' />
           <br />
           <button type='submit'>Sign In</button>
+          <br />
+          <button type="button" onClick={doGoogleSignIn}>Sign in with Google</button>
         </form>
       )}
 
-      {!isSignedIn && (showSignUp || isSignedIn) ? null : (
-        <React.Fragment>
-          <h1>Sign Out</h1>
-          {signOutSuccess}
-          <br />
-          <button onClick={doSignOut}>Sign out</button>
-        </React.Fragment>
-      )}
+{!isSignedIn && (
+  <React.Fragment>
+    <h1>Sign Out</h1>
+    {signOutSuccess}
+    <br />
+    <button onClick={doSignOut}>Sign out</button>
+  </React.Fragment>
+)}
 
-      <h4>Don't have an account?</h4>
+<h4>Don't have an account?</h4>
 
       <button onClick={toggleSignInAndOutVisibility}>
         {showSignUp ? "Return to Sign In" : "Create an account"}
       </button>
+      <br />
+      <br />
       {showSignUp && (
         <form onSubmit={doSignUp}>
           {signUpSuccess}
@@ -155,6 +172,9 @@ function SignIn() {
           </label>
           <br />
           <button type="submit">Sign up</button>
+          <br />
+          <p><b>OR</b></p>
+          <button type="button" onClick={doGoogleSignIn}>Sign up with Google</button>
         </form>
       )}
     </React.Fragment>
