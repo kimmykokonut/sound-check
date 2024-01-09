@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { geoStateIso } from "../city-state-data";
 import { getCityId, getShowsById } from "../fetchData";
+import { useNavigate } from "react-router-dom";
 
 function Browse() {
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [eventsNearby, setEventsNearby] = useState([]);
@@ -26,10 +28,8 @@ function Browse() {
       .then((jsonifiedResponse) => {
         setEventsNearby(jsonifiedResponse.events)
         setIsLoaded(true)
-        console.log(jsonifiedResponse.events);
       })
       .catch((error) => {
-        console.error('Error:', error);
         setError(error)
         setIsLoaded(true)
       });
@@ -44,7 +44,6 @@ function Browse() {
 
   function handleChange(e) {
     if (e.target.name === 'state') {
-      console.log(e.target.name);
       setSelectedState(e.target.value);
     } else if (e.target.name === 'city') {
       setSelectCity(e.target.value);
@@ -106,11 +105,10 @@ function Browse() {
             )}
           </ul>
           <br />
-          <button>Navigate to my dashboard</button>
+          <button onClick={() => navigate('/userDashboard')}>Navigate to my dashboard</button>
         </>
       )
     };
   }
 }
-
 export default Browse;
