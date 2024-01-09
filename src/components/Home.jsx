@@ -44,7 +44,7 @@ function SignIn() {
         setSignInSuccess(`You've successfully signed in as ${userCredential.user.email}!`);
         setSignUpSuccess(null);
         setIsSignedIn(true);
-        navigate('/dashBoard');
+        navigate('/userDashboard');
       })
       .catch((error) => {
         setSignInSuccess(`There was an error signing in: ${error.message}!`);
