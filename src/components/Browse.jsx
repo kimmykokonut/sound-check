@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
+import { geoStateIso } from "../city-state-data";
+import { getCityId, getShowsById } from "../fetchData";
+import { useNavigate } from "react-router-dom";
 
 function Browse() {
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [eventsNearby, setEventsNearby] = useState([]);
+  const [selectedState, setSelectedState] = useState('US-AL');
+  const [selectCity, setSelectCity] = useState('Portland');
 
-  useEffect(() => {
-    fetch(`https://www.jambase.com/jb-api/v1/events?perPage=20&geoCityId=jambase%3A4247192&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`, {
+  useEffect(() => { //this is for Portland OR API call
+    fetch(`https://www.jambase.com/jb-api/v1/events?perPage=5&geoCityId=jambase%3A4247192&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -22,58 +28,87 @@ function Browse() {
       .then((jsonifiedResponse) => {
         setEventsNearby(jsonifiedResponse.events)
         setIsLoaded(true)
-        console.log(eventsNearby);
       })
       .catch((error) => {
-        console.error('Error:', error);
         setError(error)
         setIsLoaded(true)
       });
   }, [])
 
-  // function handleForm(){
-// have api call connected to either user input city or user aut set city....
-  // }
+  async function handleClick(e) {
+    e.preventDefault();
+    const jamID = await getCityId(selectCity, selectedState);
+    const finalResult = await getShowsById(jamID);
+    setEventsNearby(finalResult);
+  }
+
+  function handleChange(e) {
+    if (e.target.name === 'state') {
+      setSelectedState(e.target.value);
+    } else if (e.target.name === 'city') {
+      setSelectCity(e.target.value);
+    }
+  }
 
   if (error) {
     return <h1>Error: {error}</h1>;
   } else if (!isLoaded) {
     return <h1>...Loading...</h1>;
   } else {
-    return (
-      <>
-        <h1>Let's go check some sounds!</h1>
-        <form>
-          <input
-            placeholder="my location..."
-            type="text"></input>
-          <button type="submit">show me shows near me</button>
-        </form>
-        <hr />
-        <h3>Who's coming to Portland?</h3>
-        <ul>
-          {eventsNearby && eventsNearby.map((show, index) =>
-            <li key={index}>
-              <h3>{show.name}</h3>
-              <h4>{
-                new Date(show.startDate).toLocaleString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: true
-                })
-              }</h4>
-              <h4>{show.location.name}</h4>
-              <p>{show.location.address.streetAddress}</p>
-              <a href={show.offers[0].url}>link to venue</a>
-              <hr />
-            </li>
-          )}
-        </ul>
-      </>
-    );
+    if (eventsNearby) {
+      return (
+        <>
+          <h1>Let's go check some sounds!</h1>
+          <form>
+            <input
+              name="city"
+              placeholder="my city..."
+              type="text"
+              onChange={handleChange}>
+            </input>
+            <br />
+            <label htmlFor="state">State: </label>
+            <select id="state" name="state" onChange={handleChange}>
+              {Object.keys(geoStateIso).map(key => {
+                return (
+                  <option name="state" value={key} key={key}>{geoStateIso[key]}
+                  </option>
+                );
+              })};
+            </select>
+            <br />
+            <button onClick={handleClick}>show me shows near me</button>
+          </form>
+          <hr />
+          <h3>Who's coming to {selectCity}?</h3>
+          <ul>
+            {eventsNearby && eventsNearby.map((show, index) =>
+              <li key={index}>
+                <h3>{show.name}</h3>
+                <h4>{
+                  new Date(show.startDate).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                  })
+                }</h4>
+                <h4>{show.location.name}</h4>
+                <p>{show.location.address.streetAddress}</p>
+                {show.offers && show.offers[0] && show.offers[0].url ? <a href={show.offers[0].url}>link to venue</a> : null}
+                <br />
+                <button>Follow</button>
+                <hr />
+              </li>
+            )}
+          </ul>
+          <br />
+          <button onClick={() => navigate('/userDashboard')}>Navigate to my dashboard</button>
+        </>
+      )
+    };
   }
 }
 export default Browse;
