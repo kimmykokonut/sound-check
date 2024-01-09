@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth, db } from '../firebase';
-import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 
 
 function Search() {
@@ -8,6 +8,7 @@ function Search() {
   const [searchInput, setSearchInput] = useState("");
   const [artists, setArtists] = useState([]);
   const [displayName, setDisplayName] = useState('');
+  const [followingArtists, setFollowingArtists] = useState([]);
 
   useEffect(() => {
     const authParameters = {
@@ -73,13 +74,10 @@ function Search() {
     try {
       const userId = displayName;
       const userRef = doc(db, 'users', userId);
-      
-      // Update followedArtists array with the new artist
+    
       await updateDoc(userRef, {
         followedArtists: arrayUnion(artistName)
       });
-  
-      // Fetch the updated user document
       const userSnapshot = await getDoc(userRef);
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data();
@@ -90,6 +88,57 @@ function Search() {
       }
     } catch (error) {
       console.error('Error updating document:', error);
+    }
+  };
+
+  const handleUnfollow = async (artistName) => {
+    try {
+      const userId = displayName;
+      const userRef = doc(db, 'users', userId);
+      
+      await updateDoc(userRef, {
+        followedArtists: arrayRemove(artistName)
+      });
+      const userSnapshot = await getDoc(userRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        console.log(`${artistName} unfollowed by ${userId}`);
+        console.log("User's updated list of followed artists:", userData.followedArtists);
+      } else {
+        console.log("User not found!");
+      }
+    } catch (error) {
+      console.error('Error updating document:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchFollowingArtists = async () => {
+      try {
+        const userId = displayName;
+        const userRef = doc(db, 'users', userId);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          setFollowingArtists(userData.followedArtists || []);
+        }
+      } catch (error) {
+        console.error('Error fetching followed artists:', error);
+      }
+    };
+  
+    fetchFollowingArtists();
+  }, [displayName]);
+
+  const isFollowing = (artistName) => {
+    return followingArtists.includes(artistName);
+  };
+
+  const handleButtonClick = (artistName) => {
+    if (isFollowing(artistName)) {
+      handleUnfollow(artistName);
+    } else {
+      handleFollow(artistName);
     }
   };
 
@@ -113,11 +162,13 @@ function Search() {
           <tbody>
             {artists.map(artist => (
               <tr key={artist.id}>
-                <td>{artist.name}</td>
-                <td>
-                <button onClick={() => handleFollow(artist.name)}>Follow</button>
-                </td>
-              </tr>
+              <td>{artist.name}</td>
+              <td>
+                <button onClick={() => handleButtonClick(artist.name)}>
+                  {isFollowing(artist.name) ? 'Unfollow' : 'Follow'}
+                </button>
+              </td>
+            </tr>
             ))}
           </tbody>
         </table>
