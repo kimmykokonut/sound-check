@@ -3,7 +3,7 @@ import Browse from "./Browse";
 import Footer from "./Footer";
 import SignIn from "./Home";
 import Search from "./Search";
-//import DashBoard from "./Dashboard";
+import { UserDashboard } from "./UserDashboard";
 
 function App() {
   return (
@@ -11,8 +11,8 @@ function App() {
       <Routes>
         <Route path="/" element={<SignIn />} />
         <Route path="/browse" element={<Browse />} />
-        {/* <Route path="/dashBoard" element={<DashBoard />} /> */}
         <Route path="/Search" element={<Search />} />
+        <Route path="/userDashboard" element={<UserDashboard />} />
       </Routes>
       <Footer />
     </Router>
