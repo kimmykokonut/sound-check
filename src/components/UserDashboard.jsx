@@ -1,24 +1,19 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
-import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+import loading from './assets/img/loading.gif'
+import { useNavigate } from 'react-router-dom';
 
 export const UserDashboard = () => {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [results, setResults] = useState([]);
-    const [band, setBand] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [artistArray, setArtistArray] = useState([]);
+    const [followingArtists, setFollowingArtists] = useState([]);
+    const [username, setUsername] = useState('');
 
-    const followedBands = {
-        0: "Radiohead",
-        1: "Dinosaur Jr",
-        2: "Pixies",
-        3: "Dessa",
-        4: "Sleater-Kinney",
-        5: "Smashing Pumpkins",
-        6: "Blink-182",
-    }
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,6 +28,8 @@ export const UserDashboard = () => {
                         if (userSnapshot.exists()) {
                             const userData = userSnapshot.data();
                             setArtistArray(userData.followedArtists || []);
+                            setFollowingArtists(userData.followedArtists || []);
+                            setUsername(userData.username)
                         } else {
                             console.log("User not found!");
                         }
@@ -106,12 +103,8 @@ export const UserDashboard = () => {
     }, []);
 
     useEffect(() => {
-        console.log(results);
-        console.log(artistArray)
-    }, [results]);
-
-    useEffect(() => {
         fetchShowsForAllBands();
+        console.log(auth.currentUser)
     }, [artistArray]);
 
     if (!auth.currentUser) {
@@ -124,11 +117,37 @@ export const UserDashboard = () => {
         return dateTime.toLocaleDateString('en-US', options);
     };
 
+    const handleUnfollow = async (artistName) => {
+        try {
+            const userId = auth.currentUser.uid;
+            const userRef = doc(db, 'users', userId);
+
+            await updateDoc(userRef, {
+                followedArtists: arrayRemove(artistName)
+            });
+
+            setFollowingArtists(prevState => prevState.filter(name => name !== artistName));
+
+            const userSnapshot = await getDoc(userRef);
+            if (userSnapshot.exists()) {
+                const userData = userSnapshot.data();
+            } else {
+                console.log("User not found!");
+            }
+        } catch (error) {
+            console.error('Error updating document:', error);
+        }
+    };
+
+    const goToSearch = () => {
+        navigate('/search');
+    }
+
     return (
         <>
             <div>
                 <h1>Dashboard</h1>
-                <h2>{displayName}</h2>
+                <h2>{username}</h2>
                 {isLoaded ? (
                     <table>
                         <thead>
@@ -142,20 +161,24 @@ export const UserDashboard = () => {
                             {artistArray.map((artist, index) => {
                                 const bandResult = results[index] || {};
                                 const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : 'N/A';
-                                return (
+                                return followingArtists.includes(artist) ? (
                                     <tr key={index}>
                                         <td>{artist}</td>
                                         <td>{formattedDate}</td>
                                         <td>{bandResult.location ? bandResult.location.name : 'N/A'}</td>
+                                        <td>
+                                            <button onClick={() => handleUnfollow(artist)}>Unfollow</button>
+                                        </td>
                                     </tr>
-                                );
+                                ) : null;
                             })}
                         </tbody>
                     </table>
                 ) : (
-                    <div>Loading...</div>
+                    <img src={loading} alt='loading' />
                 )}
             </div>
+            <button type="click" onClick={goToSearch}>Find New Artists</button>
         </>
     );
 };

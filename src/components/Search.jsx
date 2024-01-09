@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth, db } from '../firebase';
+import { useNavigate } from 'react-router-dom';
 import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 
 
@@ -9,6 +10,8 @@ function Search() {
   const [artists, setArtists] = useState([]);
   const [displayName, setDisplayName] = useState('');
   const [followingArtists, setFollowingArtists] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const authParameters = {
@@ -78,11 +81,10 @@ function Search() {
       await updateDoc(userRef, {
         followedArtists: arrayUnion(artistName)
       });
+      setFollowingArtists(prevState => [...prevState, artistName]);
       const userSnapshot = await getDoc(userRef);
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data();
-        console.log(`${artistName} followed by ${userId}`);
-        console.log("User's list of followed artists:", userData.followedArtists);
       } else {
         console.log("User not found!");
       }
@@ -99,11 +101,10 @@ function Search() {
       await updateDoc(userRef, {
         followedArtists: arrayRemove(artistName)
       });
+      setFollowingArtists(prevState => prevState.filter(name => name !== artistName));
       const userSnapshot = await getDoc(userRef);
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data();
-        console.log(`${artistName} unfollowed by ${userId}`);
-        console.log("User's updated list of followed artists:", userData.followedArtists);
       } else {
         console.log("User not found!");
       }
@@ -142,6 +143,10 @@ function Search() {
     }
   };
 
+  const goToDashboard = () => {
+    navigate('/UserDashboard');
+  }
+
   return (
     <>
       <h2>UserId: {displayName}</h2>
@@ -173,6 +178,7 @@ function Search() {
           </tbody>
         </table>
       </div>
+      <button type="click" onClick={goToDashboard}>View Dashboard</button>
     </>
   );
 }
