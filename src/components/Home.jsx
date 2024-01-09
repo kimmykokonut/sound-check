@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { auth } from './../firebase';
-import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import './SignIn.css';
+
 
 function SignIn() {
   const [signUpSuccess, setSignUpSuccess] = useState(null);
@@ -13,11 +15,13 @@ function SignIn() {
   const [showSignUp, setShowSignUp] = useState(false);
   const [isSignInHidden, setIsSignInHidden] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
+  const [isCreateAccountTextHidden, setIsCreateAccountTextHidden] = useState(false);
   const navigate = useNavigate();
 
   const toggleSignInAndOutVisibility = () => {
     setShowSignUp(!showSignUp);
     setIsSignInHidden(!isSignInHidden);
+    setIsCreateAccountTextHidden(!isCreateAccountTextHidden);
   };
 
   const handleImageChange = (e) => {
@@ -119,26 +123,26 @@ function SignIn() {
           <button type="button" onClick={doGoogleSignIn}>Sign in with Google</button>
         </form>
       )}
-
-{!isSignedIn && (
-  <React.Fragment>
-    <h1>Sign Out</h1>
-    {signOutSuccess}
-    <br />
-    <button onClick={doSignOut}>Sign out</button>
-  </React.Fragment>
-)}
-
-<h4>Don't have an account?</h4>
-
-      <button onClick={toggleSignInAndOutVisibility}>
+   
+   <div id="signOutButton">
+        {!isSignedIn && (
+          <React.Fragment>
+            {signOutSuccess}
+            <br />
+            <button onClick={doSignOut}>Sign out</button>
+          </React.Fragment>
+        )}
+      </div>
+      
+      <h4 style={{ display: isCreateAccountTextHidden ? 'none' : 'block' }}> <hr />Don't have an account?
+      </h4>
+      <button id="createAccountButton" onClick={toggleSignInAndOutVisibility}>
         {showSignUp ? "Return to Sign In" : "Create an account"}
       </button>
-      <br />
-      <br />
       {showSignUp && (
         <form onSubmit={doSignUp}>
           {signUpSuccess}
+          <h4>Create Profile</h4>
           <input
             type='text'
             name='email'
@@ -162,7 +166,6 @@ function SignIn() {
               onChange={handleImageChange}
             />
           </label>
-          <br />
           <label>
             <input
               minLength="6"
@@ -170,9 +173,9 @@ function SignIn() {
               name='password'
               placeholder="Password" />
           </label>
-          <br />
-          <button type="submit">Sign up</button>
-          <br />
+          <div id="signUp">
+            <button id="signUpButton" type="submit">Sign up</button>
+          </div>
           <p><b>OR</b></p>
           <button type="button" onClick={doGoogleSignIn}>Sign up with Google</button>
         </form>
