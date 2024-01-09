@@ -11,6 +11,7 @@ export const UserDashboard = () => {
     const [displayName, setDisplayName] = useState('');
     const [artistArray, setArtistArray] = useState([]);
     const [followingArtists, setFollowingArtists] = useState([]);
+    const [username, setUsername] = useState('');
 
     const navigate = useNavigate();
 
@@ -28,6 +29,7 @@ export const UserDashboard = () => {
                             const userData = userSnapshot.data();
                             setArtistArray(userData.followedArtists || []);
                             setFollowingArtists(userData.followedArtists || []);
+                            setUsername(userData.username)
                         } else {
                             console.log("User not found!");
                         }
@@ -145,7 +147,7 @@ export const UserDashboard = () => {
         <>
             <div>
                 <h1>Dashboard</h1>
-                <h2>{displayName}</h2>
+                <h2>{username}</h2>
                 {isLoaded ? (
                     <table>
                         <thead>
