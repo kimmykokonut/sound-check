@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
+import { auth, db } from '../firebase';
+import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
+
 
 function Search() {
   const [access_token, setAccessToken] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [artists, setArtists] = useState([]);
+  const [displayName, setDisplayName] = useState('');
 
   useEffect(() => {
     const authParameters = {
@@ -48,8 +52,50 @@ function Search() {
     await searchSpotify();
   };
 
+  useEffect(() => {
+    const checkCurrentUser = async () => {
+      try {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            setDisplayName(user.uid || '');
+          }
+        });
+      } catch (error) {
+        setError(error.message);
+        setIsLoaded(true);
+      }
+    };
+
+    checkCurrentUser();
+  }, []);
+
+  const handleFollow = async (artistName) => {
+    try {
+      const userId = displayName;
+      const userRef = doc(db, 'users', userId);
+      
+      // Update followedArtists array with the new artist
+      await updateDoc(userRef, {
+        followedArtists: arrayUnion(artistName)
+      });
+  
+      // Fetch the updated user document
+      const userSnapshot = await getDoc(userRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        console.log(`${artistName} followed by ${userId}`);
+        console.log("User's list of followed artists:", userData.followedArtists);
+      } else {
+        console.log("User not found!");
+      }
+    } catch (error) {
+      console.error('Error updating document:', error);
+    }
+  };
+
   return (
     <>
+      <h2>UserId: {displayName}</h2>
       <form onSubmit={handleSubmit}>
         <input type='text' placeholder='Search for artists' onChange={handleSearchInput} />
         <button type='submit'>Search</button>
@@ -57,11 +103,24 @@ function Search() {
 
       <div>
         <h2>Results:</h2>
-        <ul>
-          {artists.map(artist => (
-            <li key={artist.id}>{artist.name}</li>
-          ))}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>Artist</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {artists.map(artist => (
+              <tr key={artist.id}>
+                <td>{artist.name}</td>
+                <td>
+                <button onClick={() => handleFollow(artist.name)}>Follow</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );

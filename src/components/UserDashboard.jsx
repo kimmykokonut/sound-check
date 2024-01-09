@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { auth } from '../firebase';
+import { useState, useEffect } from 'react';
+import { auth, db } from '../firebase';
+import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 
 export const UserDashboard = () => {
     const [error, setError] = useState(null);
@@ -7,10 +8,7 @@ export const UserDashboard = () => {
     const [results, setResults] = useState([]);
     const [band, setBand] = useState('');
     const [displayName, setDisplayName] = useState('');
-
-    const handleInputChange = (event) => {
-        setBand(event.target.value);
-    };
+    const [artistArray, setArtistArray] = useState([]);
 
     const followedBands = {
         0: "Radiohead",
@@ -21,6 +19,33 @@ export const UserDashboard = () => {
         5: "Smashing Pumpkins",
         6: "Blink-182",
     }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        setDisplayName(user.email || '');
+                        const userId = user.uid;
+                        const userRef = doc(db, 'users', userId);
+                        const userSnapshot = await getDoc(userRef);
+
+                        if (userSnapshot.exists()) {
+                            const userData = userSnapshot.data();
+                            setArtistArray(userData.followedArtists || []);
+                        } else {
+                            console.log("User not found!");
+                        }
+                    }
+                    setIsLoaded(true);
+                });
+            } catch (error) {
+                setError(error.message);
+                setIsLoaded(true);
+            }
+        };
+        fetchData();
+    }, []);
 
     const fetchShows = async (bandName) => {
         try {
@@ -39,27 +64,25 @@ export const UserDashboard = () => {
         try {
             setIsLoaded(false);
             const allResults = [];
-            const bandKeys = Object.keys(followedBands);
 
-            const fetchShowsSequentially = async (index) => {
-                if (index < bandKeys.length) {
-                    const bandName = followedBands[bandKeys[index]];
-                    const bandResults = await fetchShows(bandName);
-                    console.log(bandResults);
+            const fetchShowsForArtist = async (artistName) => {
+                try {
+                    const bandResults = await fetchShows(artistName);
                     if (bandResults.length < 1) {
                         allResults.push({});
                     } else {
                         allResults.push(bandResults[0]);
                     }
-
-                    await fetchShowsSequentially(index + 1);
-                } else {
-                    setResults(allResults.flat());
-                    setIsLoaded(true);
+                } catch (error) {
+                    setError(error.message);
                 }
             };
+            for (const artist of artistArray) {
+                await fetchShowsForArtist(artist);
+            }
 
-            await fetchShowsSequentially(0);
+            setResults(allResults.flat());
+            setIsLoaded(true);
         } catch (error) {
             setError(error.message);
             setIsLoaded(true);
@@ -79,18 +102,17 @@ export const UserDashboard = () => {
                 setIsLoaded(true);
             }
         };
-
         checkCurrentUser();
     }, []);
 
     useEffect(() => {
         console.log(results);
+        console.log(artistArray)
     }, [results]);
-
 
     useEffect(() => {
         fetchShowsForAllBands();
-    }, []);
+    }, [artistArray]);
 
     if (!auth.currentUser) {
         return <div>Loading...</div>;
@@ -107,16 +129,6 @@ export const UserDashboard = () => {
             <div>
                 <h1>Dashboard</h1>
                 <h2>{displayName}</h2>
-                <input
-                    id='bandInput'
-                    placeholder="band"
-                    type="text"
-                    value={band}
-                    onChange={handleInputChange}
-                />
-                <button type="submit" onClick={fetchShowsForAllBands}>
-                    Find Shows
-                </button>
                 {isLoaded ? (
                     <table>
                         <thead>
@@ -127,12 +139,12 @@ export const UserDashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {Object.keys(followedBands).map((key) => {
-                                const bandResult = results[key] || {};
+                            {artistArray.map((artist, index) => {
+                                const bandResult = results[index] || {};
                                 const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : 'N/A';
                                 return (
-                                    <tr key={key}>
-                                        <td>{followedBands[key]}</td>
+                                    <tr key={index}>
+                                        <td>{artist}</td>
                                         <td>{formattedDate}</td>
                                         <td>{bandResult.location ? bandResult.location.name : 'N/A'}</td>
                                     </tr>
