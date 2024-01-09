@@ -82,8 +82,6 @@ function Search() {
       const userSnapshot = await getDoc(userRef);
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data();
-        console.log(`${artistName} followed by ${userId}`);
-        console.log("User's list of followed artists:", userData.followedArtists);
       } else {
         console.log("User not found!");
       }
@@ -104,8 +102,6 @@ function Search() {
       const userSnapshot = await getDoc(userRef);
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data();
-        console.log(`${artistName} unfollowed by ${userId}`);
-        console.log("User's updated list of followed artists:", userData.followedArtists);
       } else {
         console.log("User not found!");
       }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
-import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 
 export const UserDashboard = () => {
     const [error, setError] = useState(null);
@@ -9,6 +9,7 @@ export const UserDashboard = () => {
     const [band, setBand] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [artistArray, setArtistArray] = useState([]);
+    const [followingArtists, setFollowingArtists] = useState([]);
 
     const followedBands = {
         0: "Radiohead",
@@ -33,6 +34,7 @@ export const UserDashboard = () => {
                         if (userSnapshot.exists()) {
                             const userData = userSnapshot.data();
                             setArtistArray(userData.followedArtists || []);
+                            setFollowingArtists(userData.followedArtists || []);
                         } else {
                             console.log("User not found!");
                         }
@@ -106,11 +108,6 @@ export const UserDashboard = () => {
     }, []);
 
     useEffect(() => {
-        console.log(results);
-        console.log(artistArray)
-    }, [results]);
-
-    useEffect(() => {
         fetchShowsForAllBands();
     }, [artistArray]);
 
@@ -122,6 +119,28 @@ export const UserDashboard = () => {
         const options = { month: 'long', day: 'numeric', year: 'numeric' };
         const dateTime = new Date(dateString);
         return dateTime.toLocaleDateString('en-US', options);
+    };
+
+    const handleUnfollow = async (artistName) => {
+        try {
+            const userId = auth.currentUser.uid;
+            const userRef = doc(db, 'users', userId);
+
+            await updateDoc(userRef, {
+                followedArtists: arrayRemove(artistName)
+            });
+
+            setFollowingArtists(prevState => prevState.filter(name => name !== artistName));
+
+            const userSnapshot = await getDoc(userRef);
+            if (userSnapshot.exists()) {
+                const userData = userSnapshot.data();
+            } else {
+                console.log("User not found!");
+            }
+        } catch (error) {
+            console.error('Error updating document:', error);
+        }
     };
 
     return (
@@ -139,18 +158,21 @@ export const UserDashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {artistArray.map((artist, index) => {
-                                const bandResult = results[index] || {};
-                                const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : 'N/A';
-                                return (
-                                    <tr key={index}>
-                                        <td>{artist}</td>
-                                        <td>{formattedDate}</td>
-                                        <td>{bandResult.location ? bandResult.location.name : 'N/A'}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
+                        {artistArray.map((artist, index) => {
+                            const bandResult = results[index] || {};
+                            const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : 'N/A';
+                            return followingArtists.includes(artist) ? (
+                                <tr key={index}>
+                                    <td>{artist}</td>
+                                    <td>{formattedDate}</td>
+                                    <td>{bandResult.location ? bandResult.location.name : 'N/A'}</td>
+                                    <td>
+                                        <button onClick={() => handleUnfollow(artist)}>Unfollow</button>
+                                    </td>
+                                </tr>
+                            ) : null;
+                        })}
+                    </tbody>
                     </table>
                 ) : (
                     <div>Loading...</div>
