@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { geoStateIso } from "../city-state-data";
 import { getCityId, getShowsById } from "../fetchData";
 import { useNavigate } from "react-router-dom";
+import { auth, db } from '../firebase';
 
 function Browse() {
   const navigate = useNavigate();
@@ -10,6 +11,25 @@ function Browse() {
   const [eventsNearby, setEventsNearby] = useState([]);
   const [selectedState, setSelectedState] = useState('US-AL');
   const [selectCity, setSelectCity] = useState('Portland');
+  const [displayName, setDisplayName] = useState('');
+
+  useEffect(() => {
+    const checkCurrentUser = async () => {
+      try {
+        auth.onAuthStateChanged((user) => {
+          console.log(user);
+          if (user) {
+            setDisplayName(user.email || '');
+          }
+        });
+      } catch (error) {
+        setError(error.message);
+        //setIsLoaded(true);
+      }
+    };
+
+    checkCurrentUser();
+  }, []);
 
   useEffect(() => { //this is for Portland OR API call
     fetch(`https://www.jambase.com/jb-api/v1/events?perPage=5&geoCityId=jambase%3A4247192&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`, {
@@ -59,6 +79,8 @@ function Browse() {
       return (
         <>
           <h1>Let's go check some sounds!</h1>
+          <p>signed in: {displayName}</p>
+          <hr />
           <form>
             <input
               name="city"
@@ -105,7 +127,9 @@ function Browse() {
             )}
           </ul>
           <br />
-          <button onClick={() => navigate('/userDashboard')}>Navigate to my dashboard</button>
+          <button onClick={() => navigate('/userDashboard')}>go to my dashboard</button>
+          <hr />
+          <button onClick={() => navigate('/')}>Sign Out</button>
         </>
       )
     };
