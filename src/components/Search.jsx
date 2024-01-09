@@ -78,6 +78,7 @@ function Search() {
       await updateDoc(userRef, {
         followedArtists: arrayUnion(artistName)
       });
+      setFollowingArtists(prevState => [...prevState, artistName]);
       const userSnapshot = await getDoc(userRef);
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data();
@@ -99,6 +100,7 @@ function Search() {
       await updateDoc(userRef, {
         followedArtists: arrayRemove(artistName)
       });
+      setFollowingArtists(prevState => prevState.filter(name => name !== artistName));
       const userSnapshot = await getDoc(userRef);
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data();
