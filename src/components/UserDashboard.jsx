@@ -40,26 +40,25 @@ export const UserDashboard = () => {
             setIsLoaded(false);
             const allResults = [];
             const bandKeys = Object.keys(followedBands);
-    
+
             const fetchShowsSequentially = async (index) => {
                 if (index < bandKeys.length) {
                     const bandName = followedBands[bandKeys[index]];
                     const bandResults = await fetchShows(bandName);
                     console.log(bandResults);
-                    // Check if the response is empty or doesn't contain events
                     if (bandResults.length < 1) {
-                        allResults.push({}); // Include an empty placeholder for this band
+                        allResults.push({});
                     } else {
                         allResults.push(bandResults[0]);
                     }
-    
+
                     await fetchShowsSequentially(index + 1);
                 } else {
                     setResults(allResults.flat());
                     setIsLoaded(true);
                 }
             };
-    
+
             await fetchShowsSequentially(0);
         } catch (error) {
             setError(error.message);
@@ -74,7 +73,6 @@ export const UserDashboard = () => {
                     if (user) {
                         setDisplayName(user.email || '');
                     }
-                    setIsLoaded(true);
                 });
             } catch (error) {
                 setError(error.message);
@@ -89,11 +87,20 @@ export const UserDashboard = () => {
         console.log(results);
     }, [results]);
 
+
+    useEffect(() => {
+        fetchShowsForAllBands();
+    }, []);
+
     if (!auth.currentUser) {
         return <div>Loading...</div>;
     }
 
-    
+    const formatDate = (dateString) => {
+        const options = { month: 'long', day: 'numeric', year: 'numeric' };
+        const dateTime = new Date(dateString);
+        return dateTime.toLocaleDateString('en-US', options);
+    };
 
     return (
         <>
@@ -110,30 +117,32 @@ export const UserDashboard = () => {
                 <button type="submit" onClick={fetchShowsForAllBands}>
                     Find Shows
                 </button>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Band</th>
-                            <th>Date</th>
-                            <th>Location</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Object.keys(followedBands).map(key => (
-                            <tr key={key}>
-                                <td>{followedBands[key]}</td>
-                                {/* You can replace these placeholders with actual data */}
-                                <td>Date Placeholder</td>
-                                <td>Location Placeholder</td>
+                {isLoaded ? (
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Band</th>
+                                <th>Date</th>
+                                <th>Location</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-                {/* {results.length > 0 ? (
-                    <p>{results[0].performer[0].name} is playing at {results[0].location.name} on {results[0].startDate}</p>
+                        </thead>
+                        <tbody>
+                            {Object.keys(followedBands).map((key) => {
+                                const bandResult = results[key] || {};
+                                const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : 'N/A';
+                                return (
+                                    <tr key={key}>
+                                        <td>{followedBands[key]}</td>
+                                        <td>{formattedDate}</td>
+                                        <td>{bandResult.location ? bandResult.location.name : 'N/A'}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 ) : (
-                    <p>None</p>
-                )} */}
+                    <div>Loading...</div>
+                )}
             </div>
         </>
     );
