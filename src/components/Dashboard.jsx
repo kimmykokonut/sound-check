@@ -6,7 +6,7 @@ function UserDashboard() {
 
   const fetchShows = async () => {
     try {
-        const response = await fetch('https://www.jambase.com/jb-api/v1/events?artistName=dinosaur+jr&geoCityId=jambase%3A4247192&apikey=08a8d2c1-e4c2-4681-bb15-e2ca6ca74647');
+        const response = await fetch(`https://www.jambase.com/jb-api/v1/events?artistName=dinosaur+jr&geoCityId=jambase%3A4247192&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`);
         if (!response.ok) {
             throw new Error(`${response.status}: ${response.statusText}`);
         }
