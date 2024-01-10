@@ -1,0 +1,60 @@
+#headerLogo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 600px;
+
+}
+
+body {
+  background: rgb(198, 255, 112);
+  background: linear-gradient(180deg, rgba(198, 255, 112, 1) 30%, rgba(64, 201, 162, 1) 69%, rgba(47, 156, 149, 1) 85%);
+}
+
+#TESTCOLORS {
+  color: #c5ff6e;
+}
+
+#navBar {
+  background-color: #c6ff70;
+  padding: 0;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#navBar button {
+  background-color: #c6ff70;
+}
+
+#navBar button:hover {
+  transform: scale(1.3);
+}
+
+#dashboard {
+  margin-left: auto;
+  margin-right: auto;
+  width: 60vw;
+}
+
+#dashboardH1 {
+  text-align: center;
+}
+
+#loadingImg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+td {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  padding: 0px;
+}
+
+table {
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}

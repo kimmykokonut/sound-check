@@ -15,9 +15,7 @@ export const UserDashboard = () => {
     const [username, setUsername] = useState('');
     const [city, setCity] = useState('')
     const [state, setState] = useState('')
-    // const [profilePic, setProfilePic] = useState('') 
-
-    const navigate = useNavigate();
+    // const [profilePic, setProfilePic] = useState('')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -146,15 +144,10 @@ export const UserDashboard = () => {
         }
     };
 
-    const goToSearch = () => {
-        navigate('/search');
-    }
-
     return (
         <>
-            <div>
-                <h1>Dashboard</h1>
-                <h2>{username}</h2>
+            <div id='dashboard'>
+                <h1 id='dashboardH1'>Dashboard</h1>
                 {isLoaded ? (
                     <table>
                         <thead>
@@ -182,10 +175,9 @@ export const UserDashboard = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <img src={loading} alt='loading' />
+                    <img id='loadingImg' src={loading} alt='loading' />
                 )}
             </div>
-            <button type="click" onClick={goToSearch}>Find New Artists</button>
         </>
     );
 };

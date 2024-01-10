@@ -1,4 +1,4 @@
-body {
+/* body {
   font-family: 'Arial', sans-serif;
   background-color: white;
   margin: 0;
@@ -7,10 +7,10 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-}
+} */
 
 
-form {
+/* form {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
@@ -24,7 +24,7 @@ input {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
-}
+} */
 
 button {
   padding: 10px;
@@ -39,12 +39,12 @@ button:hover {
   background-color: #0056b3;
 }
 
-label {
+/* label {
   display: block;
   margin-bottom: 8px;
-}
+} */
 
-h1 {
+/* h1 {
   color: #333;
 }
 
@@ -52,7 +52,7 @@ h4 {
   margin-top: 20px;
   margin-bottom: 10px;
   color: #555;
-}
+} */
 
 button#signUpButton {
   background: rgb(18, 0, 36);
