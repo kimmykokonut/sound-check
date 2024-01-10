@@ -2,6 +2,9 @@
   "name": "sound-check",
   "private": true,
   "version": "0.0.0",
+  "repository": {
+    "url": "git+https://github.com/kimmykokonut/sound-check.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
