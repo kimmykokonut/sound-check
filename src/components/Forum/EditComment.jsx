@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { db } from "../../firebase";
-import { updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { updateDoc, deleteDoc, doc, increment} from "firebase/firestore";
 
 
 const EditComment = ({ comment, setComments }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedComment, setEditedComment] = useState(comment.text);
     const [error, setError] = useState(null);
-
    
     const updateCommentText = async (updatedText) => {
         await updateDoc(doc(db, 'post', comment.id), { text: updatedText });
@@ -56,33 +55,30 @@ const EditComment = ({ comment, setComments }) => {
           setError(error.message);
         }
       };
-      
 
-    return (
-        <div style={{ marginBottom: '16px', border: '1px solid #ccc', padding: '8px' }}>
-            {isEditing ? (
-                <div>
-                    <textarea
-                    value={editedComment}
-                    onChange={(e) => setEditedComment(e.target.value)}
-                    />
-                    <button onClick={handleEdit}>Save</button>
-                    <p>{error}</p>
-                </div>
-            ) : (
-                <div>
-                    <p>{comment.text}</p>
-                    <button onClick={() => setIsEditing(true)}>Edit</button>
-
-                    <button onClick={handleDelete}>Delete</button>
-                    <p>{error}</p>
-                </div>    
-            )}
+    
+      return (
+        <div >
+          {isEditing ? (
+            <div>
+              <textarea
+                value={editedComment}
+                onChange={(e) => setEditedComment(e.target.value)}
+              />
+              <button onClick={handleEdit}>Save</button>
+              <p>{error}</p>
             </div>
-    );
-};
-
+          ) : (
+            <div>
+             
+              <button onClick={() => setIsEditing(true)}>Edit</button>
+              <button onClick={handleDelete}>Delete</button>
+            
+              <p>{error}</p>
+            </div>
+          )}
+        </div>
+      );
+    };
+    
 export default EditComment;
-// edits comment
-
- 

@@ -11,7 +11,7 @@ function Forum() {
 
     return (
         <div>
-            <CommentForm onAddComment={addComment} />
+            <CommentForm setComments={setComments} onAddComment={addComment} />
             <CommentList comments={comments} />
         </div>
     );

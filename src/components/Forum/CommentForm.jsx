@@ -1,9 +1,8 @@
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp} from "firebase/firestore";
 import { db } from "../../firebase";
 import { useState } from "react";
-// import { v4 } from "uuid";
 
-const CommentForm = ({ onAddComment }) => {
+const CommentForm = ({ onAddComment, setComments }) => {
   const [commentText, setCommentText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,26 +17,25 @@ const CommentForm = ({ onAddComment }) => {
 
       setLoading(true);
       const collectionRef = collection(db, 'post');
-      console.log(collectionRef);
       const newComment = {
-        // id: id,
         text: commentText,
-        timeStamp: new Date(),
+        timeStamp: serverTimestamp(),
+      
       };
 
-      await addDoc(collectionRef, newComment);
-      console.log("after addDoc");
-
-      onAddComment(newComment);
+      const docRef = await addDoc(collectionRef, newComment);
+      const commentWithId = { ...newComment, id: docRef.id };
+      onAddComment(commentWithId);
+      setComments((prevComments) => [commentWithId, ...prevComments]);
       setCommentText('');
-      console.log("after setCommentText");
-      console.log(collectionRef)
+      setError(null);
     } catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div>
@@ -53,6 +51,7 @@ const CommentForm = ({ onAddComment }) => {
         </button>
         {error && <p>{error}</p>}
       </form>
+     
     </div>
   );
 };
