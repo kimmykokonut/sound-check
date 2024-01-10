@@ -1,25 +1,32 @@
- # Sound Check
- ## By Gabe Kim Noah Monica Zuri 
+#  Sound Check
 
- ## Technologies Used 
- * Html 
- * Javascript, ES6 
- * CSS 
- * React 
- * npm 
- * ESLint 
- * Git 
- * Vite 
- * React
- * React Hooks (useState) 
- * Firebase, firestore database, firebase storage 
+See our application live [here](https://sound-check.netlify.app/)
+
+## By Gabe Tucker, Kim Robinson, Noah Kise, Monica Barboza, Zuri Gallegos
+
+![Component Diagram](/src/assets/component-diagram.drawio.svg)
+
+## Technologies Used
+
+* Html
+* Javascript, ES6
+* CSS
+* React
+* npm 
+* ESLint
+* Git
+* Vite
+* React
+* React Hooks (useState)
+* Firebase, firestore database, firebase storage
+* Material UIe
 
 ###  This app will allow a user to:
-    -Search for bands playing in your area
-    -Follow favorite bands 
-    -See if followed bands are playing in your area! 
+    -Search for bands in their area playing
+    -Save favorite bands 
     -Talk with others with the same interest 
-    -Expolre new bands
+    -Explore new bands
+
 
  ## Setup/Installation Requirements 
  1. Navigate to the [github repository](https://github.com/kimmykokonut/sound-check) for this project 
