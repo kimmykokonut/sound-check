@@ -43,4 +43,4 @@
 8. To launch the dev server, run `$ npm run dev` then `$ o + enter` or clicking the link in terminal.
 
 ## License
-MIT License. See [license.md](license.md) for further information
+MIT License. See [LICENSE.md](./LICENSE.md) for further information
