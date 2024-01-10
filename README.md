@@ -1,6 +1,10 @@
 #  Sound Check
 
-## By Gabe Kim Noah Monica Zuri 
+See it live [here](https://sound-check.netlify.app/)
+
+## By Gabe Tucker, Kim Robinson, Noah Kise, Monica Barboza, Zuri Gallegos
+
+![Component Diagram](/src/assets/component-diagram.drawio.svg)
 
 ## Technologies Used
 
@@ -15,12 +19,13 @@
 * React
 * React Hooks (useState)
 * Firebase, firestore database, firebase storage
+* Material UIe
 
 ###  This app will allow a user to:
     -Search for bands in their area playing
     -Save favorite bands 
-    -Talk with others with the same instrest 
-    -Expolre new bands
+    -Talk with others with the same interest 
+    -Explore new bands
 
 ## Setup/Installation Requirements
 
