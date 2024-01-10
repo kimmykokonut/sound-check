@@ -23,7 +23,7 @@ export function getCityId(city, state) {
 }
 
 export function getShowsById(jamID) {
-  return fetch(`https://www.jambase.com/jb-api/v1/events?perPage=5&geoCityId=${jamID}&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`, {
+  return fetch(`https://www.jambase.com/jb-api/v1/events?perPage=12&geoCityId=${jamID}&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
