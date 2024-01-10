@@ -5,7 +5,7 @@ import { updateDoc, deleteDoc, doc, increment} from "firebase/firestore";
 
 const EditComment = ({ comment, setComments }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [editedComment, setEditedComment] = useState(comment.text);
+    const [editedComment, setEditedComment] = useState();
     const [error, setError] = useState(null);
    
     const updateCommentText = async (updatedText) => {
