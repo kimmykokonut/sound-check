@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-
 function Browse() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -25,14 +24,13 @@ function Browse() {
         });
       } catch (error) {
         setError(error.message);
-        //setIsLoaded(true);
+        setIsLoaded(true);
       }
     };
-
     checkCurrentUser();
   }, []);
 
-  //this currently defaults to Pdx shows until we can get user db input state as 'US-CT' format
+  //possible bug if user does not have Both city and state on sign in...
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,9 +45,8 @@ function Browse() {
             if (userSnapshot.exists()) {
               const userData = userSnapshot.data();
               console.log(userData.city);
-              //call api call by city/state here?
-              //add to city once state is set: userData.city ||
-              const city = 'Portland'
+              console.log(userData.state);
+              const city = userData.city || 'Portland';
               setSelectCity(city);
               const state = userData.state || 'US-OR';
               setSelectedState(state);
