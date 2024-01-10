@@ -1,6 +1,6 @@
 #  Sound Check
 
-See it live [here](https://sound-check.netlify.app/)
+See our application live [here](https://sound-check.netlify.app/)
 
 ## By Gabe Tucker, Kim Robinson, Noah Kise, Monica Barboza, Zuri Gallegos
 
