@@ -3,7 +3,7 @@ import { geoStateIso } from "../city-state-data";
 import { getCityId, getShowsById } from "../fetchData";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
 function Browse() {
   const navigate = useNavigate();
@@ -13,6 +13,8 @@ function Browse() {
   const [selectedState, setSelectedState] = useState('US-AL');
   const [selectCity, setSelectCity] = useState('Portland');
   const [displayName, setDisplayName] = useState('');
+  const [followingArtists, setFollowingArtists] = useState([]);
+
 
   useEffect(() => {
     const checkCurrentUser = async () => {
@@ -20,6 +22,7 @@ function Browse() {
         auth.onAuthStateChanged((user) => {
           if (user) {
             setDisplayName(user.email || '');
+            const userId = user.uid;
           }
         });
       } catch (error) {
@@ -30,7 +33,6 @@ function Browse() {
     checkCurrentUser();
   }, []);
 
-  //possible bug if user does not have Both city and state on sign in...
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,12 +42,9 @@ function Browse() {
             const userId = user.uid;
             const userRef = doc(db, 'users', userId);
             const userSnapshot = await getDoc(userRef);
-            console.log(userSnapshot);
 
             if (userSnapshot.exists()) {
               const userData = userSnapshot.data();
-              console.log(userData.city);
-              console.log(userData.state);
               const city = userData.city || 'Portland';
               setSelectCity(city);
               const state = userData.state || 'US-OR';
@@ -54,7 +53,7 @@ function Browse() {
               const finalResult = await getShowsById(jamID);
               setEventsNearby(finalResult);
             } else {
-              console.log("User not found!");
+              setError("User not found!");
             }
           }
           setIsLoaded(true);
@@ -66,30 +65,6 @@ function Browse() {
     };
     fetchData();
   }, []);
-
-  // useEffect(() => { //this is for Portland OR API call
-  //   fetch(`https://www.jambase.com/jb-api/v1/events?perPage=5&geoCityId=jambase%3A4247192&apikey=${import.meta.env.VITE_REACT_APP_JAMBASE}`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Accept': 'application/json',
-  //     },
-  //   })
-  //     .then(response => {
-  //       if (!response.ok) {
-  //         throw new Error(`${response.status}: ${response.statusText}`);
-  //       } else {
-  //         return response.json()
-  //       }
-  //     })
-  //     .then((jsonifiedResponse) => {
-  //       setEventsNearby(jsonifiedResponse.events)
-  //       setIsLoaded(true)
-  //     })
-  //     .catch((error) => {
-  //       setError(error)
-  //       setIsLoaded(true)
-  //     });
-  // }, [])
 
   async function handleClick(e) {
     e.preventDefault();
@@ -106,6 +81,50 @@ function Browse() {
     }
   }
 
+  const handleFollow = async (artistName) => {
+    try {
+      const userId = auth.currentUser.uid;
+      const userRef = doc(db, 'users', userId);
+
+      await updateDoc(userRef, {
+        followedArtists: arrayUnion(artistName)
+      });
+      setFollowingArtists(prevState => [...prevState, artistName]);
+      const userSnapshot = await getDoc(userRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+      } else {
+        setError("User not found!");
+      }
+    } catch (error) {
+      setError('Error updating document:', error);
+    }
+  };
+
+  const handleUnfollow = async (artistName) => {
+    try {
+      const userId = auth.currentUser.uid;
+      const userRef = doc(db, 'users', userId);
+
+      await updateDoc(userRef, {
+        followedArtists: arrayRemove(artistName)
+      });
+      setFollowingArtists(prevState => prevState.filter(name => name !== artistName));
+      const userSnapshot = await getDoc(userRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+      } else {
+        setError("User not found!");
+      }
+    } catch (error) {
+      setError('Error updating document:', error);
+    }
+  };
+
+  function isFollowing(artistName) {
+    return followingArtists.includes(artistName);
+  }
+
   if (error) {
     return <h1>Error: {error}</h1>;
   } else if (!isLoaded) {
@@ -114,7 +133,7 @@ function Browse() {
     if (eventsNearby) {
       return (
         <>
-          <h1>Let's go check some sounds!</h1>
+          <h1>soundCheck by city</h1>
           <p>signed in: {displayName}</p>
           <hr />
           <form>
@@ -135,13 +154,14 @@ function Browse() {
               })};
             </select>
             <br />
-            <button onClick={handleClick}>show me shows</button>
+            <button onClick={handleClick}>show me</button>
           </form>
           <hr />
           <h3>Who's coming to {selectCity}?</h3>
-          <ul>
+          <hr/>
+          <div>
             {eventsNearby && eventsNearby.map((show, index) =>
-              <li key={index}>
+              <div key={index}>
                 <h3>{show.name}</h3>
                 <h4>{
                   new Date(show.startDate).toLocaleString('en-US', {
@@ -157,11 +177,12 @@ function Browse() {
                 <p>{show.location.address.streetAddress}</p>
                 {show.offers && show.offers[0] && show.offers[0].url ? <a href={show.offers[0].url}>link to venue</a> : null}
                 <br />
-                <button>Follow</button>
+                <button onClick={() => handleFollow(show.performer[0].name)}>
+                  {isFollowing(show.performer[0].name) ? 'Unfollow' : 'Follow'}</button>
                 <hr />
-              </li>
+              </div>
             )}
-          </ul>
+          </div>
           <br />
           <button onClick={() => navigate('/userDashboard')}>go to my dashboard</button>
           <hr />
