@@ -110,7 +110,6 @@ export const UserDashboard = () => {
 
     useEffect(() => {
         fetchShowsForAllBands();
-        console.log(auth.currentUser)
     }, [artistArray]);
 
     if (!auth.currentUser) {
@@ -180,7 +179,7 @@ export const UserDashboard = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <img id='loadingImg' src={loading} alt='loading' />
+                    <img className='loadingImg' src={loading} alt='loading' />
                 )}
             </div>
         </>
