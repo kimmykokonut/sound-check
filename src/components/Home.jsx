@@ -125,8 +125,8 @@ function SignIn() {
           <button type="button" onClick={doGoogleSignIn}>Sign in with Google</button>
         </form>
       )}
-   
-   <div id="signOutButton">
+
+      <div id="signOutButton">
         {!isSignedIn && (
           <React.Fragment>
             {signOutSuccess}
@@ -135,7 +135,7 @@ function SignIn() {
           </React.Fragment>
         )}
       </div>
-      
+
       <h4 style={{ display: isCreateAccountTextHidden ? 'none' : 'block' }}> <hr />Don't have an account?
       </h4>
       <button id="createAccountButton" onClick={toggleSignInAndOutVisibility}>
@@ -161,15 +161,16 @@ function SignIn() {
             placeholder="City" />
           <br />
           <label htmlFor="state">State: </label>
-            <select id="state" name="state">
-              {Object.keys(geoStateIso).map(key => {
-                return (
-                  <option name="state" value={key} key={key}>{geoStateIso[key]}
-                  </option>
-                );
-              })};
-            </select>
+          <select id="state" name="state">
+            {Object.keys(geoStateIso).map(key => {
+              return (
+                <option name="state" value={key} key={key}>{geoStateIso[key]}
+                </option>
+              );
+            })};
+          </select>
           <label>
+            < br />
             Profile Image:
             <input
               type="file"
@@ -177,6 +178,7 @@ function SignIn() {
               onChange={handleImageChange}
             />
           </label>
+          < br />
           <label>
             <input
               minLength="6"
