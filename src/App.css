@@ -7,7 +7,8 @@
 }
 
 body {
-  background-color: #c6ff70;
+  background: rgb(198, 255, 112);
+  background: linear-gradient(180deg, rgba(198, 255, 112, 1) 30%, rgba(64, 201, 162, 1) 69%, rgba(47, 156, 149, 1) 85%);
 }
 
 #TESTCOLORS {
@@ -20,6 +21,14 @@ body {
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
+}
+
+#navBar button {
+  background-color: #c6ff70;
+}
+
+#navBar button:hover {
+  transform: scale(1.3);
 }
 
 #dashboard {

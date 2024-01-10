@@ -89,7 +89,7 @@ export const SimpleBottomNavigation = () => {
   };
 
   return (
-    <div id='navBar'> {/* Removed the unnecessary <> and Box component */}
+    <div id='navBar'>
       <Box sx={{ width: 550 }}>
         <BottomNavigation
           showLabels
