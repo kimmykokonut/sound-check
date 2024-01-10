@@ -1,16 +1,20 @@
-import React from "react";
-import CommentList from "./Comments";
+import React, { useState } from "react";
+import CommentList from "./CommentList";
 import CommentForm from "./CommentForm";
 
-
 function Forum() {
+    const [comments, setComments] = useState([]);
+
+    const addComment = (newComment) => {
+        setComments((prevComments) => [...prevComments, newComment]);
+    };
+
     return (
         <div>
-            <h2>Forum</h2>
-            <CommentList />
-            <CommentForm />
+            <CommentForm setComments={setComments} onAddComment={addComment} />
+            <CommentList comments={comments} />
         </div>
     );
-};
+}
 
 export default Forum;
