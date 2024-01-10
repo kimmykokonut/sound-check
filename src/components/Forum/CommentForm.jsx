@@ -1,8 +1,10 @@
-import { collection, addDoc, serverTimestamp} from "firebase/firestore";
-import { db } from "../../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db, auth } from "../../firebase";
 import { useState } from "react";
 
-const CommentForm = ({ onAddComment, setComments }) => {
+import { arrayUnion, arrayRemove } from 'firebase/firestore';
+
+const CommentForm = ({ onAddComment, setComments, userId }) => {
   const [commentText, setCommentText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -16,11 +18,17 @@ const CommentForm = ({ onAddComment, setComments }) => {
       }
 
       setLoading(true);
+
+      const userId = auth.currentUser.uid;
+
       const collectionRef = collection(db, 'post');
       const newComment = {
         text: commentText,
         timeStamp: serverTimestamp(),
-      
+        userId: userId, 
+        going: false,
+        interested: false,
+        notGoing: false,
       };
 
       const docRef = await addDoc(collectionRef, newComment);
@@ -36,7 +44,6 @@ const CommentForm = ({ onAddComment, setComments }) => {
     }
   };
 
-
   return (
     <div>
       <h2>Add a Comment</h2>
@@ -51,7 +58,6 @@ const CommentForm = ({ onAddComment, setComments }) => {
         </button>
         {error && <p>{error}</p>}
       </form>
-     
     </div>
   );
 };
