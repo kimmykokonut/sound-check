@@ -15,7 +15,7 @@ export const UserDashboard = () => {
     const [username, setUsername] = useState('');
     const [city, setCity] = useState('')
     const [state, setState] = useState('')
-    // const [profilePic, setProfilePic] = useState('')
+    // const [profilePic, setProfilePic] = useState('') 
 
     const navigate = useNavigate();
 
