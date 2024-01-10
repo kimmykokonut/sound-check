@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { auth, db } from '../firebase';
-import { useNavigate } from 'react-router-dom';
 import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
-
+import '../App.css'
 
 function Search() {
   const [access_token, setAccessToken] = useState("");
@@ -10,8 +9,6 @@ function Search() {
   const [artists, setArtists] = useState([]);
   const [displayName, setDisplayName] = useState('');
   const [followingArtists, setFollowingArtists] = useState([]);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const authParameters = {
@@ -143,24 +140,18 @@ function Search() {
     }
   };
 
-  const goToDashboard = () => {
-    navigate('/UserDashboard');
-  }
-
   return (
     <>
-      <h2>UserId: {displayName}</h2>
-      <form onSubmit={handleSubmit}>
+      <form id="searchForm" onSubmit={handleSubmit}>
         <input type='text' placeholder='Search for artists' onChange={handleSearchInput} />
         <button type='submit'>Search</button>
       </form>
 
       <div>
-        <h2>Results:</h2>
         <table>
           <thead>
             <tr>
-              <th>Artist</th>
+              <th>Artist Results</th>
               <th></th>
             </tr>
           </thead>
@@ -178,7 +169,6 @@ function Search() {
           </tbody>
         </table>
       </div>
-      <button type="click" onClick={goToDashboard}>View Dashboard</button>
     </>
   );
 }
