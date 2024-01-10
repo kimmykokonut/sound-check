@@ -1,7 +1,7 @@
 import EditComment from "./EditComment";
 import { useState, useEffect } from "react";
-import { db } from "../../firebase";
-import { collection, getDocs, doc, updateDoc,increment } from "firebase/firestore";
+import { auth, db } from '../../firebase';
+import { collection, getDocs, doc, updateDoc,increment, setDoc } from "firebase/firestore";
 
 function CommentList() {
   const [comments, setComments] = useState([]);
@@ -9,7 +9,7 @@ function CommentList() {
   const [going, setGoing] = useState(0);
   const [interested, setInterested] = useState(0);
   const [notGoing, setNotGoing] = useState(0);
-
+  // const auth = auth.currentUser.uid;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,16 +35,7 @@ function CommentList() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleEditClick = (commentId) => {
-    setSelectedCommentId(commentId);
-  };
 
-  const handleDeleteClick = (commentId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
-    if (confirmDelete) {
-      console.log("Deleting comment with ID:", commentId);
-    }
-  };
 
   const handleCommentClick = (commentId) => {
     setSelectedCommentId(commentId);
@@ -53,12 +44,30 @@ function CommentList() {
   const handleEditCommentClose = () => {
     setSelectedCommentId(null);
   };
-  
   const handleNotGoing = async (commentId) => {
     try {
-      const commentDocRef = doc(db, 'post', commentId);
-      await updateDoc(commentDocRef, { notGoing: increment(1) });
-      setNotGoing((prevNotGoing) => prevNotGoing + 1);
+      const userId = auth.currentUser.uid;
+
+    
+      const userInteractionRef = doc(db, "userInteractions", `${userId}_${commentId}`);
+      const userInteractionDoc = await getDoc(userInteractionRef);
+
+      if (!userInteractionDoc.exists()) {
+     
+        const commentDocRef = doc(db, "post", commentId);
+        await updateDoc(commentDocRef, { notGoing: increment(1) });
+
+        setNotGoing((prevNotGoing) => prevNotGoing + 1);
+
+       
+        await setDoc(userInteractionRef, {
+          userId,
+          commentId,
+          interactionType: "Not Going",
+        });
+      } else {
+        console.log("User has already interacted with this comment");
+      }
     } catch (error) {
       console.error("Error not going comment:", error.message);
       setError(error.message);
