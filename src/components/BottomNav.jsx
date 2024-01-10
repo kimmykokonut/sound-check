@@ -41,7 +41,7 @@ export const SimpleBottomNavigation = () => {
 
   return (
     <div id='navBar'>
-      <Box sx={{ width: 550 }}>
+      <Box sx={{ width: 100 }}>
         <BottomNavigation
           showLabels
           value={value}

@@ -15,7 +15,7 @@ export const UserDashboard = () => {
     const [username, setUsername] = useState('');
     const [city, setCity] = useState('')
     const [state, setState] = useState('')
-    // const [profilePic, setProfilePic] = useState('')
+    const [profilePic, setProfilePic] = useState('')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,6 +34,7 @@ export const UserDashboard = () => {
                             setUsername(userData.username)
                             setCity(userData.city)
                             setState(userData.state)
+                            setProfilePic(userData.profileImage)
                         } else {
                             console.log("User not found!");
                         }
@@ -147,7 +148,11 @@ export const UserDashboard = () => {
     return (
         <>
             <div id='dashboard'>
-                <h1 id='dashboardH1'>Dashboard</h1>
+                <div id='dashUserRow'>
+                    <img id='dashboardPic' src={profilePic} alt='profile' />
+                    <h2 id='dashboardUsername'>{username}</h2>
+                </div>
+                <h1 id='dashboardH1'>UPCOMING SHOWS</h1>
                 {isLoaded ? (
                     <table>
                         <thead>

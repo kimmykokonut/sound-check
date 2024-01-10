@@ -1,10 +1,16 @@
-function Footer () {
+import '../App.css'
+
+function Footer() {
   return (
     <>
-    <hr />
-      <a href="https://github.com/kimmykokonut/sound-check">
-        Designed and built by Team Awesome
-      </a>
+      <div id='flexParent'>
+        <div id='flexChild'>
+          {/* <hr /> */}
+          <a id="footerLink" href="https://github.com/kimmykokonut/sound-check">
+            Designed and built by Team Awesome
+          </a>
+        </div>
+      </div>
     </>
   )
 }
