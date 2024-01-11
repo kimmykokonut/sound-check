@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { db, auth } from "../../firebase";
 import { updateDoc, deleteDoc, doc } from "firebase/firestore";
-
+import './Forum.css'
 
 const EditComment = ({ comment, setComments }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -113,8 +113,8 @@ const EditComment = ({ comment, setComments }) => {
         >
           {userId && (
             <>
-              <button onClick={handleEdit}>Edit</button>
-              <button onClick={handleDelete}>Delete</button>
+              <button className="button" onClick={handleEdit}>Edit</button>
+              <button className="button" onClick={handleDelete}>Delete</button>
             </>
           )}
           <p>{error}</p>

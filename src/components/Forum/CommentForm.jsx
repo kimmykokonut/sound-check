@@ -1,8 +1,9 @@
 import { collection, addDoc, serverTimestamp, getDoc, doc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import { useState, useEffect } from "react";
-import { Container, Grid, Button,  TextField } from "@mui/material";
+import { Container, Grid, Button, TextField } from "@mui/material";
 import { arrayUnion, arrayRemove } from 'firebase/firestore';
+import './Forum.css'
 
 
 const CommentForm = ({ onAddComment, setComments, userId }) => {
@@ -10,14 +11,14 @@ const CommentForm = ({ onAddComment, setComments, userId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [userName, setUserName] = useState('');
-  
-  
+
+
   useEffect(() => {
     const fetchUserName = async () => {
       try {
         const userRef = doc(db, 'users', userId);
         const userSnapshot = await getDoc(userRef);
-  
+
         if (userSnapshot.exists()) {
           const fetchedUserData = userSnapshot.data();
           setUserName(fetchedUserData.username);
@@ -28,7 +29,7 @@ const CommentForm = ({ onAddComment, setComments, userId }) => {
         console.error('Error fetching username:', error);
       }
     };
-  
+
     if (userId) {
       fetchUserName();
     }
@@ -51,17 +52,16 @@ const CommentForm = ({ onAddComment, setComments, userId }) => {
       const userSnapshot = await getDoc(userRef);
       const userData = userSnapshot.data();
       setUserName(userData.username);
-      console.log('userData:', userData.username);
       const newComment = {
         text: commentText,
         timeStamp: serverTimestamp(),
-        userId: userId, 
+        userId: userId,
         userName: userData.username,
         profileImage: userData.profileImage,
         going: 0,
         interested: 0,
         notGoing: 0,
-     
+
       };
 
       const docRef = await addDoc(postCollectionRef, newComment);
@@ -74,7 +74,6 @@ const CommentForm = ({ onAddComment, setComments, userId }) => {
         interactionType: 'Not Going',
       });
       const commentWithId = { ...newComment, id: docRef.id };
-      console.log('commentWithId:', userData.username);
       onAddComment(commentWithId);
       setComments((prevComments) => [commentWithId, ...prevComments]);
       setCommentText('');
@@ -88,26 +87,28 @@ const CommentForm = ({ onAddComment, setComments, userId }) => {
 
   return (
     <div style={{ margin: '5%' }}>
-    <Container>
-      <Grid container  spacing={.8}>
-      <h2>Add a Comment...</h2>
-      <Grid item >
-        <TextField
-          placeholder='type your comment here...'
-          value={commentText}
-          style={{ backgroundColor: 'white' }} 
-          onChange={(e) => setCommentText(e.target.value)}
-        />
-      </Grid>
-      <Grid item>
-        <Button  variant="contained" onClick={handleSubmit}>
-          {loading ? 'Posting...' : 'Post'}
-        </Button>
-      </Grid>
-        {error && <p>{error}</p>}
-      </Grid>
-    </Container>
-      </div>
+      <Container>
+        <Grid container spacing={.8}>
+          <h2 id="addAComment">Add a Comment...</h2>
+          <Grid item >
+            <textArea
+              id="textField"
+              size='small'
+              placeholder='type your comment here...'
+              value={commentText}
+              style={{ backgroundColor: 'white' }}
+              onChange={(e) => setCommentText(e.target.value)}
+            />
+          </Grid>
+          <Grid item>
+            <button id="postButton" className="button" variant="contained" onClick={handleSubmit}>
+              {loading ? 'Posting...' : 'Post'}
+            </button>
+          </Grid>
+          {error && <p>{error}</p>}
+        </Grid>
+      </Container>
+    </div>
   );
 };
 
