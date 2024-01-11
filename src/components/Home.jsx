@@ -4,9 +4,9 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
 import { geoStateIso } from "../city-state-data";
 import { useNavigate } from 'react-router-dom';
+import { Button, Input, TextField } from '@mui/material';
 import { auth } from './../firebase';
 import './SignIn.css';
-
 
 function SignIn() {
   const [signUpSuccess, setSignUpSuccess] = useState(null);
@@ -127,19 +127,19 @@ function SignIn() {
       {signInSuccess}
       {!showSignUp && !isSignedIn && !showForgotPassword && (
         <form onSubmit={doSignIn}>
-          <input
+             <TextField
             type='text'
             name='signinEmail'
             placeholder='email' />
           <br />
-          <input
+          <TextField
             type='password'
             name='signinPassword'
             placeholder='password' />
           <br />
-          <button type='submit'>Sign In</button>
+          <Button type='submit'>Sign In</Button>
           <br />
-          <button type="button" onClick={doGoogleSignIn}>Sign in with Google</button>
+          <Button type="button" onClick={doGoogleSignIn}>Sign in with Google</Button>
         </form>
       )}
 
@@ -151,7 +151,7 @@ function SignIn() {
           {showForgotPassword && (
             <div>
 
-              <input
+              <Input
                 type="text"
                 name="resetEmail"
                 placeholder="Enter your email"
@@ -187,17 +187,17 @@ function SignIn() {
         <form onSubmit={doSignUp}>
           {signUpSuccess}
           <h4>Create Profile</h4>
-          <input
+          <TextField
             type='text'
             name='email'
             placeholder="email" />
           <br />
-          <input
+          <TextField
             type='text'
             name='username'
             placeholder="Username" />
           <br />
-          <input
+          <TextField
             type='text'
             name='city'
             placeholder="City" />
@@ -222,7 +222,7 @@ function SignIn() {
           </label>
           <br />
           <label>
-            <input
+          <TextField
               minLength="6"
               type='password'
               name='password'
