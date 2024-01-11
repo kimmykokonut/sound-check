@@ -183,3 +183,13 @@ table {
 #browseHeader {
   font-family: bison;
 }
+
+#signInH1 {
+  font-family: bison;
+  font-size: 40px;
+}
+
+#avatar {
+  background-color: black;
+  color: #c6ff70;
+}
