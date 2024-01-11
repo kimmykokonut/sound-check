@@ -29,7 +29,7 @@ function CommentList() {
 
     fetchData();
 
-    const intervalId = setInterval(fetchData, 20000);
+    const intervalId = setInterval(fetchData, 60000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -147,7 +147,14 @@ function CommentList() {
               }}
             >
               <p>{comment.text}</p>
-              <p>Posted By: {comment.userName}</p>
+              <p>Posted By: {comment.userName}
+                  <img
+                    src={comment.profilePic}
+                    alt={`Profile of ${comment.userName}`}
+                    style={{ marginLeft: '8px', borderRadius: '50%', width: '32px', height: '32px' }}
+                  />
+                
+              </p>
               <p>{comment.timeStamp.toDate().toLocaleString()}</p>
               {selectedCommentId === comment.id && (
                 <div
@@ -171,9 +178,10 @@ function CommentList() {
 
       {selectedCommentId && (
         <EditComment
-          comment={comments.find((c) => c.id === selectedCommentId)}
-          setComments={setComments}
-          onClose={handleEditCommentClose}
+        comment={comments.find((c) => c.id === selectedCommentId)}
+        setComments={setComments}
+        onClose={handleEditCommentClose}
+        userId={auth.currentUser?.uid}
         />
       )}
     </div>

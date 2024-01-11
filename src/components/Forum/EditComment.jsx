@@ -111,7 +111,7 @@ const EditComment = ({ comment, setComments }) => {
             gap: "8px",
           }}
         >
-          {userId === comment.userId && (
+          {userId && (
             <>
               <button onClick={handleEdit}>Edit</button>
               <button onClick={handleDelete}>Delete</button>
@@ -125,5 +125,3 @@ const EditComment = ({ comment, setComments }) => {
 };
 
 export default EditComment;
-
-// line 114-119 breaks the app (delete not working) says userID is undefined.
