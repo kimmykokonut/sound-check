@@ -36,4 +36,7 @@ See our application live [here](https://sound-check.netlify.app/)
  5. go into the project directory in bash and type `$ code .` to open in VS Code.  If you do not have VS Code Editor, you may download [here](https://code.visualstudio.com/) 
  6. Once in VS Code, open the terminal there and type `$ npm install` (to install the packages and dependencies). 
  7.  Everything should be running now 
- 8. To launch the dev server, run `$ npm run dev` then `$ o + enter` or clicking the link in terminal. ## License MIT License. See [LICENSE.md](./LICENSE.md) for further information
+ 8. To launch the dev server, run `$ npm run dev` then `$ o + enter` or clicking the link in terminal. 
+ 
+ ## License 
+ MIT License. See [LICENSE.md](./LICENSE.md) for further information
