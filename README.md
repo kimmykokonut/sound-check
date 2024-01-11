@@ -19,7 +19,7 @@ See our application live [here](https://sound-check.netlify.app/)
 * React
 * React Hooks (useState)
 * Firebase, firestore database, firebase storage
-* Material UIe
+* Material UI
 
 ###  This app will allow a user to:
     -Search for bands in their area playing
