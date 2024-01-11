@@ -4,7 +4,7 @@ import { getCityId, getShowsById } from "../fetchData";
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import loading from './assets/img/loading.gif'
-import { Card, CardContent, CardMedia, Button, CardActions, Container, Grid, Typography, FormControl, Input, Select, MenuItem, InputLabel, TextField } from '@mui/material';
+import { Card, CardContent, CardMedia, Button, CardActions, Container, Grid, Typography, MenuItem, TextField } from '@mui/material';
 
 function Browse() {
   const [error, setError] = useState(null);
@@ -12,16 +12,13 @@ function Browse() {
   const [eventsNearby, setEventsNearby] = useState([]);
   const [selectedState, setSelectedState] = useState('US-AL');
   const [selectCity, setSelectCity] = useState('Portland');
-  const [displayName, setDisplayName] = useState('');
   const [followingArtists, setFollowingArtists] = useState([]);
-
 
   useEffect(() => {
     const checkCurrentUser = async () => {
       try {
         auth.onAuthStateChanged((user) => {
           if (user) {
-            setDisplayName(user.email || '');
             const userId = user.uid;
           }
         });
@@ -38,7 +35,6 @@ function Browse() {
       try {
         auth.onAuthStateChanged(async (user) => {
           if (user) {
-            setDisplayName(user.email || '');
             const userId = user.uid;
             const userRef = doc(db, 'users', userId);
             const userSnapshot = await getDoc(userRef);
@@ -134,9 +130,8 @@ function Browse() {
       return (
         <>
           <Container>
-            <Typography variant="subtitle2" align="right">signed in: {displayName}</Typography>
-            <Grid container>
-              <Grid item xs={12} sm={2}>
+            <Grid container spacing={0.5}>
+              <Grid item xs={12} sm={3} md={2} lg={2} >
                 <TextField
                   required
                   size="small"
@@ -145,7 +140,7 @@ function Browse() {
                   type="text"
                   onChange={handleChange} />
               </Grid>
-              <Grid item xs={12} sm={2}>
+              <Grid item xs={12} sm={1.6} md={1} lg={1}>
                 <TextField
                   required
                   size="small"
@@ -163,19 +158,19 @@ function Browse() {
                   })};
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={3} md={2} lg={2} >
                 <Button onClick={handleClick}>show me</Button>
               </Grid >
             </Grid >
           </Container >
           <hr />
-          <Container sx={{ py: 2 }} justifyContent="center" maxWidth="lg">
+          <Container sx={{ py: 1 }} maxWidth="lg">
             <Typography component="h1"
               variant="h3"
               align="center"
               color="text.primary"
               gutterBottom>Who's coming to {selectCity}?</Typography>
-            <Grid container spacing={4}>
+            <Grid container spacing={3}>
               {eventsNearby.length === 0 ? (
                 <Typography variant="h6" align="center">
                   Sorry, no shows coming to {selectCity}!
@@ -183,7 +178,7 @@ function Browse() {
               ) : (
                 eventsNearby.map((show, index) =>
                   <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-                    <Card sx={{
+                    <Card elevation={5} sx={{
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
@@ -192,7 +187,7 @@ function Browse() {
                       <CardMedia
                         component='div'
                         sx={{ pt: '56.25%' }}
-                        image="https://source.unsplash.com/random?wallpapers" />
+                        image={show.image} />
                       <CardContent sx={{ flexGrow: 1 }}>
                         <Typography gutterBottom variant="h5">{show.name}</Typography>
                         <Typography variant="subtitle2" gutterBottom>{
