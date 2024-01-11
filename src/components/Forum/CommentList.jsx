@@ -122,16 +122,17 @@ function CommentList() {
       {comments.length === 0 ? (
         <p>No comments yet.</p>
       ) : (
-        <ul   style={{
-          backgroundColor: "#f9f9f9",
-          marginBottom: "16px",
-          border: "1px solid #ccc",
-          padding: "8px",
-          cursor: "pointer",
-          position: "relative",
-        }}>
+
+          <div style={{
+            backgroundColor: "#f9f9f9",
+            marginBottom: "16px",
+            border: "1px solid #ccc",
+            padding: "8px",
+            cursor: "pointer",
+            position: "relative", }}>
+
           {comments.map((comment) => (
-            <li
+            <div
               key={comment.id}
               onClick={() => handleCommentClick(comment.id)}
               style={{
@@ -142,6 +143,7 @@ function CommentList() {
                 padding: "8px",
                 cursor: "pointer",
                 position: "relative",
+                backgroundColor: selectedCommentId === comment.id ? "#0d98ba " : "#fff",
               }}
             >
               <p>{comment.text}</p>
@@ -162,9 +164,9 @@ function CommentList() {
                   <button onClick={() => handleNotGoing(comment.id)}>Not Going ({notGoing})</button>
                 </div>
               )}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
       {selectedCommentId && (
