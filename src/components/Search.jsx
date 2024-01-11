@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { auth, db } from '../firebase';
 import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import '../App.css'
+import silhouette from './assets/img/silhouette.webp'
 
 function Search() {
   const [access_token, setAccessToken] = useState("");
@@ -74,7 +75,7 @@ function Search() {
     try {
       const userId = displayName;
       const userRef = doc(db, 'users', userId);
-    
+
       await updateDoc(userRef, {
         followedArtists: arrayUnion(artistName)
       });
@@ -94,7 +95,7 @@ function Search() {
     try {
       const userId = displayName;
       const userRef = doc(db, 'users', userId);
-      
+
       await updateDoc(userRef, {
         followedArtists: arrayRemove(artistName)
       });
@@ -124,7 +125,7 @@ function Search() {
         console.error('Error fetching followed artists:', error);
       }
     };
-  
+
     fetchFollowingArtists();
   }, [displayName]);
 
@@ -137,6 +138,7 @@ function Search() {
       handleUnfollow(artistName);
     } else {
       handleFollow(artistName);
+      console.log(artists[0].images[0].url)
     }
   };
 
@@ -144,27 +146,28 @@ function Search() {
     <>
       <form id="searchForm" onSubmit={handleSubmit}>
         <input type='text' placeholder='Search for artists' onChange={handleSearchInput} />
-        <button type='submit'>Search</button>
+        <button id="searchButton" className="button" type='submit'>Search</button>
       </form>
 
       <div>
         <table>
           <thead>
             <tr>
-              <th>Artist Results</th>
+              <th></th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {artists.map(artist => (
               <tr key={artist.id}>
-              <td>{artist.name}</td>
-              <td>
-                <button onClick={() => handleButtonClick(artist.name)}>
-                  {isFollowing(artist.name) ? 'Unfollow' : 'Follow'}
-                </button>
-              </td>
-            </tr>
+                <td> <img id='searchThumbnail' src={artist.images[0] ? artist.images[0].url : silhouette} alt='artist thumbnail' /></td>
+                <td id="searchArtistName">{artist.name}</td>
+                <td>
+                  <button id="searchFollowButton" className="button" onClick={() => handleButtonClick(artist.name)}>
+                    {isFollowing(artist.name) ? 'Unfollow' : 'Follow'}
+                  </button>
+                </td>
+              </tr>
             ))}
           </tbody>
         </table>

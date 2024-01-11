@@ -29,7 +29,7 @@ function CommentList() {
 
     fetchData();
 
-    const intervalId = setInterval(fetchData, 20000);
+    const intervalId = setInterval(fetchData, 60000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -122,16 +122,17 @@ function CommentList() {
       {comments.length === 0 ? (
         <p>No comments yet.</p>
       ) : (
-        <ul   style={{
-          backgroundColor: "#f9f9f9",
-          marginBottom: "16px",
-          border: "1px solid #ccc",
-          padding: "8px",
-          cursor: "pointer",
-          position: "relative",
-        }}>
+
+          <div style={{
+            backgroundColor: "#f9f9f9",
+            marginBottom: "16px",
+            border: "1px solid #ccc",
+            padding: "8px",
+            cursor: "pointer",
+            position: "relative", }}>
+
           {comments.map((comment) => (
-            <li
+            <div
               key={comment.id}
               onClick={() => handleCommentClick(comment.id)}
               style={{
@@ -142,10 +143,18 @@ function CommentList() {
                 padding: "8px",
                 cursor: "pointer",
                 position: "relative",
+                backgroundColor: selectedCommentId === comment.id ? "#0d98ba " : "#fff",
               }}
             >
               <p>{comment.text}</p>
-              <p>Posted By: {comment.userName}</p>
+              <p>Posted By: {comment.userName}
+                  <img
+                    src={comment.profilePic}
+                    alt={`Profile of ${comment.userName}`}
+                    style={{ marginLeft: '8px', borderRadius: '50%', width: '32px', height: '32px' }}
+                  />
+                
+              </p>
               <p>{comment.timeStamp.toDate().toLocaleString()}</p>
               {selectedCommentId === comment.id && (
                 <div
@@ -162,16 +171,17 @@ function CommentList() {
                   <button onClick={() => handleNotGoing(comment.id)}>Not Going ({notGoing})</button>
                 </div>
               )}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
       {selectedCommentId && (
         <EditComment
-          comment={comments.find((c) => c.id === selectedCommentId)}
-          setComments={setComments}
-          onClose={handleEditCommentClose}
+        comment={comments.find((c) => c.id === selectedCommentId)}
+        setComments={setComments}
+        onClose={handleEditCommentClose}
+        userId={auth.currentUser?.uid}
         />
       )}
     </div>

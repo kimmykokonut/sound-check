@@ -3,6 +3,7 @@ import { auth, db } from '../firebase';
 import { doc, updateDoc, arrayRemove, getDoc } from 'firebase/firestore';
 import loading from './assets/img/loading.gif'
 import { getCityId } from '../fetchData';
+import concert from './assets/img/concert.jpeg'
 
 export const UserDashboard = () => {
     const [error, setError] = useState(null);
@@ -80,6 +81,7 @@ export const UserDashboard = () => {
             }
 
             setResults(allResults.flat());
+            console.log(results)
             setIsLoaded(true);
         } catch (error) {
             setError(error.message);
@@ -147,22 +149,24 @@ export const UserDashboard = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>Band</th>
-                                <th>Date</th>
-                                <th>Location</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             {artistArray.map((artist, index) => {
                                 const bandResult = results[index] || {};
-                                const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : 'N/A';
+                                const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : '---';
                                 return followingArtists.includes(artist) ? (
                                     <tr key={index}>
-                                        <td>{artist}</td>
+                                        <td> <img id='artistThumbnail' src={bandResult.image ? bandResult.image : concert} alt='artist thumbnail' /></td>
+                                        <td id='dashboardArtist'>{artist}</td>
                                         <td>{formattedDate}</td>
-                                        <td>{bandResult.location ? bandResult.location.name : 'N/A'}</td>
+                                        <td>{bandResult.location ? bandResult.location.name : '---'}</td>
                                         <td>
-                                            <button onClick={() => handleUnfollow(artist)}>Unfollow</button>
+                                            <button className='button' onClick={() => handleUnfollow(artist)}>Unfollow</button>
                                         </td>
                                     </tr>
                                 ) : null;

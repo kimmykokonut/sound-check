@@ -167,6 +167,7 @@ function Browse() {
           <Container sx={{ py: 1 }} maxWidth="lg">
             <Typography component="h1"
               variant="h3"
+              id="browseHeader"
               align="center"
               color="text.primary"
               gutterBottom>Who's coming to {selectCity}?</Typography>

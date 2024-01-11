@@ -63,7 +63,7 @@ export const Header = () => {
           <img id='dashboardPic' src={profilePic} alt='profile' />
           <h2 id='dashboardUsername'>{username}</h2>
           <div id='headerSignOutButton'>
-            <button onClick={doSignOut}>Sign out</button>
+            <button className='button' onClick={doSignOut}>Sign out</button>
             <br />
             {signOutSuccess}
           </div>
