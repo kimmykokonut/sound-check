@@ -2,7 +2,8 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 600px;
+  width: 50vw;
+  max-width: 600px;
   filter: brightness(0%);
 
 }
@@ -10,10 +11,11 @@
 body {
   background: rgb(47, 156, 149);
   background: linear-gradient(90deg, rgba(47, 156, 149, 1) 7%, rgba(198, 255, 112, 1) 22%, rgba(198, 255, 112, 1) 78%, rgba(47, 156, 149, 1) 93%);
+  font-family: "Open Sans", sans-serif;
 }
 
 #TESTCOLORS {
-  color: #c5ff6e;
+  color: #c6ff70;
 }
 
 #navBar {
@@ -39,8 +41,13 @@ body {
 }
 
 #dashboardH1 {
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 40px;
+  font-family: bison;
   text-align: center;
+}
+
+#dashboardArtist {
+  font-weight: bold;
 }
 
 .loadingImg {
@@ -52,13 +59,14 @@ body {
 td {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
-  padding: 0px;
+  padding-right: 20px;
 }
 
 table {
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
+  border-collapse: collapse;
 }
 
 #flexChild {
@@ -82,14 +90,17 @@ table {
 }
 
 #dashboardPic {
-  width: 50px;
+  width: 10vw;
+  max-width: 60px;
   border-radius: 50%;
   margin-right: 0;
   margin-bottom: -15px;
 }
 
 #dashboardUsername {
-  font-size: 16px;
+  font-size: 20px;
+  font-family: bison;
+  margin-bottom: 5px;
 }
 
 #dashUserRow {
@@ -98,4 +109,77 @@ table {
   position: absolute;
   top: 15px;
   right: 15px;
+  width: 10vw;
+}
+
+#artistThumbnail {
+  width: 100px;
+  height: 58px;
+  border-radius: 5%;
+  margin: 10px 10px 10px 0;
+}
+
+/* CSS */
+.button {
+  font-family: "Open Sans", sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #000;
+  cursor: pointer;
+  border: 3px solid;
+  padding: 0.25em 0.5em;
+  box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  background-color: transparent;
+  width: 95px;
+}
+
+.button:active {
+  box-shadow: 0px 0px 0px 0px;
+  top: 5px;
+  left: 5px;
+}
+
+@media (min-width: 768px) {
+  .button {
+    padding: 0.25em 0.75em;
+  }
+}
+
+#searchButton {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+#searchFollowButton {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+#artistThumbnail {
+  width: 100px;
+}
+
+#searchThumbnail {
+  width: 80px;
+  margin-top: 3px;
+}
+
+#searchArtistName {
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: bison;
+  src: url(../public/bison.ttf);
+}
+
+#browseHeader {
+  font-family: bison;
 }
