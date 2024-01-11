@@ -23,7 +23,7 @@ See our application live [here](https://sound-check.netlify.app/)
 ## Usage
 This app enables users to:
 - **Search for Local Bands:** Find information about bands playing in your area.
-- **Save Favorite Bands:** Folow your favorite bands for quick access.
+- **Save Favorite Bands:** Follow your favorite bands for quick access.
 - **Connect with other Users:** Engage in conversations with others who share similar music interests.
 - **Explore New Bands:** Discover and explore new bands to broaden your musical horizons.
 
