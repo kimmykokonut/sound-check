@@ -3,6 +3,7 @@ import { geoStateIso } from "../city-state-data";
 import { getCityId, getShowsById } from "../fetchData";
 import { auth, db } from '../firebase';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import loading from './assets/img/loading.gif'
 import { Card, CardContent, CardMedia, Button, CardActions, Container, Grid, Typography, FormControl, Input, Select, MenuItem, InputLabel, TextField } from '@mui/material';
 
 function Browse() {
@@ -127,7 +128,7 @@ function Browse() {
   if (error) {
     return <h1>Error: {error}</h1>;
   } else if (!isLoaded) {
-    return <h1>...Loading...</h1>;
+    return <img className='loadingImg' src={loading} alt='loading' />;
   } else {
     if (eventsNearby) {
       return (
