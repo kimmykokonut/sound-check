@@ -1,58 +1,35 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail} from "firebase/auth";
-import { TextField, FormControl, InputLabel, MenuItem, Select, Button, Input,  styled} from '@mui/material';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { TextField, Button, Link, Grid, Box, Avatar, Typography, Container, FormControlLabel, Checkbox, createTheme, ThemeProvider, Select, MenuItem, CssBaseline, FormControl, InputLabel, } from "@mui/material";
 import { geoStateIso } from "../city-state-data";
-import { useNavigate } from 'react-router-dom';
-import { auth } from './../firebase';
-import './SignIn.css';
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getFirestore,  doc, setDoc } from "firebase/firestore";
+import { auth } from "./../firebase";
 
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+const defaultTheme = createTheme();
 
 const CustomFileInput = ({ onChange }) => {
   return (
     <React.Fragment>
       <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
         Upload File
-        <VisuallyHiddenInput type="file" onChange={onChange} />
+        <input type="file" style={{ display: "none" }} onChange={onChange} />
       </Button>
     </React.Fragment>
   );
 };
 
-function SignIn() {
-  const [state, setState] = useState('');
-  const [signUpSuccess, setSignUpSuccess] = useState(null);
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [signInSuccess, setSignInSuccess] = useState(null);
+export default function SignIn() {
+  const [state, setState] = useState("");
   const [showSignUp, setShowSignUp] = useState(false);
-  const [isSignInHidden, setIsSignInHidden] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
-  const [isCreateAccountTextHidden, setIsCreateAccountTextHidden] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetSuccess, setResetSuccess] = useState(null);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPassword, setForgotPassword] = useState(false);
   const navigate = useNavigate();
-
-  const toggleSignInAndOutVisibility = () => {
-    setShowSignUp(!showSignUp);
-    setIsSignInHidden(!isSignInHidden);
-    setIsCreateAccountTextHidden(!isCreateAccountTextHidden);
-    setShowForgotPassword(false);
-  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -66,7 +43,7 @@ function SignIn() {
     const password = e.target.password.value;
     const username = e.target.username.value;
     const city = e.target.city.value;
-    const state = e.target.state.value;
+    const userState = e.target.state.value;
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -79,16 +56,13 @@ function SignIn() {
         const storageRef = ref(storage, `profile_images/${user.uid}`);
         await uploadBytes(storageRef, profileImage);
         const imageUrl = await getDownloadURL(storageRef);
-        await setDoc(userDocRef, { username, city, profileImage: imageUrl, state });
+        await setDoc(userDocRef, { username, city, profileImage: imageUrl, state: userState });
       } else {
-        await setDoc(userDocRef, { username, city, state });
+        await setDoc(userDocRef, { username, city, state: userState });
       }
-      setSignUpSuccess(`You've successfully signed up, ${user.email}!`);
-      setSignInSuccess(null);
-      setIsSignedIn(true);
       navigate('/UserDashboard');
     } catch (error) {
-      setSignUpSuccess(`There was an error signing up: ${error.message}!`);
+      // setSignUpSuccess(`There was an error signing up: ${error.message}!`);
     }
   };
 
@@ -98,26 +72,10 @@ function SignIn() {
     const password = e.target.signinPassword.value;
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      setSignInSuccess(`You've successfully signed in as ${userCredential.user.email}!`);
-      setSignUpSuccess(null);
-      setIsSignedIn(true);
+      signInWithEmailAndPassword(auth, email, password);
       navigate('/UserDashboard');
     } catch (error) {
-      setSignInSuccess(`There was an error signing in: ${error.message}!`);
-    }
-  };
-
-  const doGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const userCredential = await signInWithPopup(auth, provider);
-      setSignInSuccess(`You've successfully signed in with Google as ${userCredential.user.email}!`);
-      setSignUpSuccess(null);
-      setIsSignedIn(true);
-      navigate('/UserDashboard');
-    } catch (error) {
-      setSignInSuccess(`There was an error signing in with Google: ${error.message}!`);
+      // setSignInSuccess(`There was an error signing in: ${error.message}!`);
     }
   };
 
@@ -130,115 +88,162 @@ function SignIn() {
     }
   };
 
-  const toggleForgotPassword = () => {
-    setShowForgotPassword(!showForgotPassword);
+  const handleForgotPassword = () => {
+    setForgotPassword(!forgotPassword);
   };
 
   return (
-    <React.Fragment>
-      {!isSignInHidden && !isSignedIn && !showForgotPassword && <h1>Sign In</h1>}
-      {signInSuccess}
-      {!showSignUp && !isSignedIn && !showForgotPassword && (
-        <form onSubmit={doSignIn}>
-             <TextField
-            type='text'
-            name='signinEmail'
-            placeholder='email' />
-          <br />
-          <TextField
-            type='password'
-            name='signinPassword'
-            placeholder='password' />
-          <br />
-          <Button variant="outlined" type='submit'>Sign In</Button>
-          <br />
-          <Button variant="outlined" type="button" onClick={doGoogleSignIn}>Sign in with Google</Button>
-        </form>
-      )}
-
-      {!isSignedIn && (
-        <div>
-          <br />
-          <p onClick={toggleForgotPassword}><a>Forgot Password?</a></p>
-          {showForgotPassword && (
-            <div>
-
-              <Input
-                type="text"
-                name="resetEmail"
-                placeholder="Enter your email"
-                value={resetEmail}
-                onChange={(e) => setResetEmail(e.target.value)}/>
-              <br />
-              <Button type="button" variant="contained" onClick={doPasswordReset}>
-                Reset Password
-              </Button>
-              {resetSuccess && <p>{resetSuccess}</p>}
-            </div>
-          )}
-        </div>
-      )}
-
-      <h4 style={{ display: isCreateAccountTextHidden ? 'none' : 'block' }}> <hr />Don't have an account?
-      </h4>
-      <Button id="createAccountButton" variant="contained" onClick={toggleSignInAndOutVisibility}>
-        {showSignUp ? "Return to Sign In" : "Create an account"}
-      </Button>
-      {showSignUp && (
-        <form onSubmit={doSignUp}>
-          {signUpSuccess}
-          <h4>Create Profile</h4>
-          <TextField
-            type='text'
-            name='email'
-            placeholder="email" />
-          <br />
-          <TextField
-            type='text'
-            name='username'
-            placeholder="Username" />
-          <br />
-          <TextField
-              minLength="6"
-              type='password'
-              name='password'
-              placeholder="Password" />
-          < br/>
-          <TextField
-            type='text'
-            name='city'
-            placeholder="City" />
-          <br />
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel htmlFor="state">State</InputLabel>
-            <Select
-              labelId="state-label"
-              id="state"
-              name="state"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              label="State">
-              {Object.keys(geoStateIso).map((key) => (
-                <MenuItem key={key} value={key}>
-                  {geoStateIso[key]}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-            <br />
-            Profile Image:
-            < br />
-            <CustomFileInput type="file" accept="image/*"onChange={handleImageChange} />
-          <br />
-          <div id="signUp">
-            <Button id="signUpButton" variant="contained" type="submit">Sign up</Button>
-          </div>
-          <p><b>OR</b></p>
-          <Button type="button" variant="contained" onClick={doGoogleSignIn}>Sign up with Google</Button>
-        </form>
-      )}
-    </React.Fragment>
+    <ThemeProvider theme={defaultTheme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            {showSignUp ? "Sign Up" : "Sign In"}
+          </Typography>
+          <Box
+            component="form"
+            onSubmit={showSignUp ? doSignUp : doSignIn}
+            noValidate
+            sx={{ mt: 1 }}
+          >
+            {showSignUp && (
+              <>
+                <TextField
+                  type='text'
+                  name='email'
+                  placeholder='Email'
+                  fullWidth
+                />
+                <TextField
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  fullWidth
+                />
+                <TextField
+                  minLength="6"
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  fullWidth
+                />
+                <TextField
+                  type="text"
+                  name="city"
+                  placeholder="City"
+                  fullWidth
+                />
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel htmlFor="state">State</InputLabel>
+                  <Select
+                    labelId="state-label"
+                    id="state"
+                    name="state"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    label="State">
+                    {Object.keys(geoStateIso).map((key) => (
+                      <MenuItem key={key} value={key}>
+                        {geoStateIso[key]}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <br />
+                Profile Image:
+                <br />
+                <CustomFileInput onChange={handleImageChange} />
+                <br />
+              </>
+            )}
+            {!showSignUp && (
+              <>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="signinEmail"
+                  label="Email Address"
+                  name="signinEmail"
+                  autoComplete="email"
+                  autoFocus
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="signinPassword"
+                  label="Password"
+                  type="password"
+                  id="signinPassword"
+                  autoComplete="current-password"
+                />
+              </>
+            )}
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              {showSignUp ? "Sign Up" : "Sign In"}
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                {forgotPassword ? (
+                  <>
+                    <TextField
+                      type="text"
+                      name="resetEmail"
+                      placeholder="Enter your email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                    />
+                    <br />
+                    <Button
+                      type="button"
+                      variant="contained"
+                      onClick={doPasswordReset}
+                    >
+                      Reset Password
+                    </Button>
+                    {resetSuccess && <p>{resetSuccess}</p>}
+                  </>
+                ) : (
+                  <Link href="#" variant="body2" onClick={handleForgotPassword}>
+                    Forgot password?
+                  </Link>
+                )}
+              </Grid>
+              <Grid item>
+                <Link
+                  href="#"
+                  variant="body2"
+                  onClick={() => setShowSignUp(!showSignUp)}
+                >
+                  {showSignUp
+                    ? "Already have an account? Sign In"
+                    : "Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Container>
+    </ThemeProvider>
   );
 }
-
-export default SignIn;
