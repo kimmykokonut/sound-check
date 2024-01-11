@@ -1,6 +1,7 @@
 import { collection, addDoc, serverTimestamp, getDoc, doc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import { useState, useEffect } from "react";
+import { Container, Grid, Button,  TextField } from "@mui/material";
 import { arrayUnion, arrayRemove } from 'firebase/firestore';
 
 
@@ -57,14 +58,21 @@ const CommentForm = ({ onAddComment, setComments, userId }) => {
         userId: userId, 
         userName: userData.username,
         profileImage: userData.profileImage,
-       
-        // going: false,
-        // interested: false,
-        // notGoing: false,
+        going: 0,
+        interested: 0,
+        notGoing: 0,
+     
       };
 
       const docRef = await addDoc(postCollectionRef, newComment);
-      // docRef = await addDoc(userCollectionRef, newComment);
+      await addDoc(userInteractionsCollectionRef, {
+        userId,
+        commentId: docRef.id,
+        interactionType: 'Comment',
+        interactionType: 'Going',
+        interactionType: 'Interested',
+        interactionType: 'Not Going',
+      });
       const commentWithId = { ...newComment, id: docRef.id };
       console.log('commentWithId:', userData.username);
       onAddComment(commentWithId);
@@ -79,20 +87,27 @@ const CommentForm = ({ onAddComment, setComments, userId }) => {
   };
 
   return (
-    <div>
-      <h2>Add a Comment</h2>
-      <form>
-        <textarea
+    <div style={{ margin: '5%' }}>
+    <Container>
+      <Grid container  spacing={.8}>
+      <h2>Add a Comment...</h2>
+      <Grid item >
+        <TextField
           placeholder='type your comment here...'
           value={commentText}
+          style={{ backgroundColor: 'white' }} 
           onChange={(e) => setCommentText(e.target.value)}
         />
-        <button onClick={handleSubmit}>
+      </Grid>
+      <Grid item>
+        <Button  variant="contained" onClick={handleSubmit}>
           {loading ? 'Posting...' : 'Post'}
-        </button>
+        </Button>
+      </Grid>
         {error && <p>{error}</p>}
-      </form>
-    </div>
+      </Grid>
+    </Container>
+      </div>
   );
 };
 
