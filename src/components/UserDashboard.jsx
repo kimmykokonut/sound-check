@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
-import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayRemove, getDoc } from 'firebase/firestore';
 import loading from './assets/img/loading.gif'
-import { useNavigate } from 'react-router-dom';
 import { getCityId } from '../fetchData';
 
 export const UserDashboard = () => {
@@ -12,10 +11,8 @@ export const UserDashboard = () => {
     const [displayName, setDisplayName] = useState('');
     const [artistArray, setArtistArray] = useState([]);
     const [followingArtists, setFollowingArtists] = useState([]);
-    const [username, setUsername] = useState('');
     const [city, setCity] = useState('')
     const [state, setState] = useState('')
-    const [profilePic, setProfilePic] = useState('')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,10 +28,8 @@ export const UserDashboard = () => {
                             const userData = userSnapshot.data();
                             setArtistArray(userData.followedArtists || []);
                             setFollowingArtists(userData.followedArtists || []);
-                            setUsername(userData.username)
                             setCity(userData.city)
                             setState(userData.state)
-                            setProfilePic(userData.profileImage)
                         } else {
                             console.log("User not found!");
                         }
@@ -110,7 +105,6 @@ export const UserDashboard = () => {
 
     useEffect(() => {
         fetchShowsForAllBands();
-        console.log(auth.currentUser)
     }, [artistArray]);
 
     if (!auth.currentUser) {
@@ -148,10 +142,6 @@ export const UserDashboard = () => {
     return (
         <>
             <div id='dashboard'>
-                <div id='dashUserRow'>
-                    <img id='dashboardPic' src={profilePic} alt='profile' />
-                    <h2 id='dashboardUsername'>{username}</h2>
-                </div>
                 <h1 id='dashboardH1'>UPCOMING SHOWS</h1>
                 {isLoaded ? (
                     <table>
@@ -180,7 +170,7 @@ export const UserDashboard = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <img id='loadingImg' src={loading} alt='loading' />
+                    <img className='loadingImg' src={loading} alt='loading' />
                 )}
             </div>
         </>
