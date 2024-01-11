@@ -12,7 +12,9 @@ function Forum() {
     return (
         <div>
             <CommentForm setComments={setComments} onAddComment={addComment} />
+            <div>
             <CommentList comments={comments} />
+            </div>
         </div>
     );
 }
