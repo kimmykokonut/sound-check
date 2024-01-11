@@ -5,6 +5,7 @@ import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { signOut } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
+import waveform from './assets/img/waveform.webp'
 
 
 export const Header = () => {
@@ -41,7 +42,6 @@ export const Header = () => {
         setIsLoaded(true);
       }
     };
-    console.log("executing")
     fetchData();
   }, []);
 
@@ -57,7 +57,10 @@ export const Header = () => {
 
   return (
     <>
-      <img id='headerLogo' src={soundcheckLogo} alt='logo' />
+      <div id='headerPicRow'>
+        <img id='headerLogo' src={soundcheckLogo} alt='logo' />
+        {/* <img id='waveform' src={waveform} alt='waveform' /> */}
+      </div>
       {isSignedIn && (
         <div id='dashUserRow'>
           <img id='dashboardPic' src={profilePic} alt='profile' />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth, db } from '../firebase';
-import { getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import '../App.css'
 import silhouette from './assets/img/silhouette.webp'
 
@@ -138,7 +138,6 @@ function Search() {
       handleUnfollow(artistName);
     } else {
       handleFollow(artistName);
-      console.log(artists[0].images[0].url)
     }
   };
 

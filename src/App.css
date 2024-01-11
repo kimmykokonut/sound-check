@@ -1,7 +1,6 @@
 #headerLogo {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin-right: 0;
   width: 50vw;
   max-width: 600px;
   filter: brightness(0%);
@@ -91,8 +90,9 @@ table {
 
 #dashboardPic {
   width: 10vw;
-  max-width: 60px;
+  max-width: 65px;
   border-radius: 50%;
+  border: 2px solid black;
   margin-right: 0;
   margin-bottom: -15px;
 }
@@ -192,4 +192,17 @@ table {
 #avatar {
   background-color: black;
   color: #c6ff70;
+}
+
+#headerPicRow {
+  display: flex;
+  justify-content: center;
+}
+
+#waveform {
+  filter: brightness(0%);
+  width: 10vw;
+  max-width: 60px;
+  margin-left: -10px;
+  margin-top: 2vh;
 }

@@ -6,7 +6,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import ExploreIcon from '@mui/icons-material/Explore';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatIcon from '@mui/icons-material/Chat';
-import KeyIcon from '@mui/icons-material/Key';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 import '../App.css';
