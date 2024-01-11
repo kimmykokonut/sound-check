@@ -8,12 +8,21 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatIcon from '@mui/icons-material/Chat';
 import KeyIcon from '@mui/icons-material/Key';
 import { useNavigate } from 'react-router-dom';
-import '../App.css';
 import { auth } from '../firebase';
+import '../App.css';
 
 export const SimpleBottomNavigation = () => {
   const [value, setValue] = React.useState(0);
+  const [isSignedIn, setIsSignedIn] = React.useState(false);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsSignedIn(!!user);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleNavigation = (index) => {
     setValue(index);
@@ -32,34 +41,34 @@ export const SimpleBottomNavigation = () => {
         navigate('/userDashboard');
         break;
       case 4:
-        navigate('/')
+        navigate('/');
         break;
       default:
         break;
     }
   };
 
+  if (!isSignedIn) {
+    return null;
+  }
+
   return (
-    <>
-      {auth.currentUser && (
-        <div id='navBar'>
-          <Box sx={{ width: 100 }}>
-            <BottomNavigation
-              showLabels
-              value={value}
-              onChange={(event, newValue) => {
-                handleNavigation(newValue);
-              }}
-            >
-              <BottomNavigationAction icon={<SearchIcon />} />
-              <BottomNavigationAction icon={<ExploreIcon />} />
-              <BottomNavigationAction icon={<ChatIcon />} />
-              <BottomNavigationAction icon={<AccountCircleIcon />} />
-              <BottomNavigationAction icon={<KeyIcon />} />
-            </BottomNavigation>
-          </Box>
-        </div>
-      )}
-    </>
+    <div id='navBar'>
+      <Box sx={{ width: 100 }}>
+        <BottomNavigation
+          showLabels
+          value={value}
+          onChange={(event, newValue) => {
+            handleNavigation(newValue);
+          }}
+        >
+          <BottomNavigationAction icon={<SearchIcon />} />
+          <BottomNavigationAction icon={<ExploreIcon />} />
+          <BottomNavigationAction icon={<ChatIcon />} />
+          <BottomNavigationAction icon={<AccountCircleIcon />} />
+          <BottomNavigationAction icon={<KeyIcon />} />
+        </BottomNavigation>
+      </Box>
+    </div>
   );
 };
