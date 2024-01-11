@@ -104,10 +104,10 @@ export default function SignIn() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar id='avatar' sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography id="signInH1" component="h1" variant="h5">
             {showSignUp ? "Sign Up" : "Sign In"}
           </Typography>
           <Box

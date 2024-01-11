@@ -9,7 +9,6 @@ export const UserDashboard = () => {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [results, setResults] = useState([]);
-    const [displayName, setDisplayName] = useState('');
     const [artistArray, setArtistArray] = useState([]);
     const [followingArtists, setFollowingArtists] = useState([]);
     const [city, setCity] = useState('')
@@ -20,7 +19,6 @@ export const UserDashboard = () => {
             try {
                 auth.onAuthStateChanged(async (user) => {
                     if (user) {
-                        setDisplayName(user.email || '');
                         const userId = user.uid;
                         const userRef = doc(db, 'users', userId);
                         const userSnapshot = await getDoc(userRef);
@@ -81,29 +79,12 @@ export const UserDashboard = () => {
             }
 
             setResults(allResults.flat());
-            console.log(results)
             setIsLoaded(true);
         } catch (error) {
             setError(error.message);
             setIsLoaded(true);
         }
     };
-
-    useEffect(() => {
-        const checkCurrentUser = async () => {
-            try {
-                auth.onAuthStateChanged((user) => {
-                    if (user) {
-                        setDisplayName(user.email || '');
-                    }
-                });
-            } catch (error) {
-                setError(error.message);
-                setIsLoaded(true);
-            }
-        };
-        checkCurrentUser();
-    }, []);
 
     useEffect(() => {
         fetchShowsForAllBands();
@@ -155,7 +136,7 @@ export const UserDashboard = () => {
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id='tableBody'>
                             {artistArray.map((artist, index) => {
                                 const bandResult = results[index] || {};
                                 const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : '---';
@@ -174,7 +155,7 @@ export const UserDashboard = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <img className='loadingImg' src={loading} alt='loading' />
+                    <img id='dashboardLoad' className='loadingImg' src={loading} alt='loading' />
                 )}
             </div>
         </>
