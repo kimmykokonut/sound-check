@@ -1,42 +1,43 @@
-#  Sound Check
+# Sound Check
 
 See our application live [here](https://sound-check.netlify.app/)
 
-## By Gabe Tucker, Kim Robinson, Noah Kise, Monica Barboza, Zuri Gallegos
+## By Gabriel Tucker, Kim Robinson, Noah Kise, Monica Barboza, Zuri Gallegos
 
 ![Component Diagram](/src/assets/component-diagram.drawio.svg)
 
 ## Technologies Used
+- Html
+- Javascript, ES6
+- CSS
+- React
+- npm 
+- ESLint
+- Git
+- Vite
+- React
+- React Hooks (useState)
+- Firebase, firestore database, firebase storage
+- Material UI
 
-* Html
-* Javascript, ES6
-* CSS
-* React
-* npm 
-* ESLint
-* Git
-* Vite
-* React
-* React Hooks (useState)
-* Firebase, firestore database, firebase storage
-* Material UI
+## Usage
+This app enables users to:
+- **Search for Local Bands:** Find information about bands playing in your area.
+- **Save Favorite Bands:** Folow your favorite bands for quick access.
+- **Connect with other Users:** Engage in conversations with others who share similar music interests.
+- **Explore New Bands:** Discover and explore new bands to broaden your musical horizons.
 
-###  This app will allow a user to:
-    -Search for bands in their area playing
-    -Save favorite bands 
-    -Talk with others with the same interest 
-    -Explore new bands
+Feel free to explore these functionalities to enhance your experience with Sound Check!
 
+## Setup/Installation Requirements 
+1. Navigate to the [GitHub repository](https://github.com/kimmykokonut/sound-check) for this project.
+2. Click the `Code` button and copy the URL for HTTPS.
+3. Open Bash and type: `git clone https://github.com/kimmykokonut/sound-check.git`
+4. It should appear on your Desktop.
+5. Go into the project directory in Bash and type `$ code .` to open in VS Code. If you do not have VS Code Editor, you may download it [here](https://code.visualstudio.com/).
+6. Once in VS Code, open the terminal there and type `$ npm install` (to install the packages and dependencies).
+7. Everything should be running now.
+8. To launch the dev server, run `$ npm run dev` then `$ o + enter` or click the link in the terminal.
 
- ## Setup/Installation Requirements 
- 1. Navigate to the [github repository](https://github.com/kimmykokonut/sound-check) for this project 
- 2. Click the `Code` button and copy the url for HTTPS. 
- 3. Open Bash and type: <b>`git clone https://github.com/kimmykokonut/sound-check.git`<b> 
- 4. It should appear on your Desktop 
- 5. go into the project directory in bash and type `$ code .` to open in VS Code.  If you do not have VS Code Editor, you may download [here](https://code.visualstudio.com/) 
- 6. Once in VS Code, open the terminal there and type `$ npm install` (to install the packages and dependencies). 
- 7.  Everything should be running now 
- 8. To launch the dev server, run `$ npm run dev` then `$ o + enter` or clicking the link in terminal. 
- 
- ## License 
- MIT License. See [LICENSE.md](./LICENSE.md) for further information
+## License 
+MIT License. See [LICENSE.md](./LICENSE.md) for further information
