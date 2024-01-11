@@ -6,7 +6,7 @@ import { Container, Grid, Card, CardContent, CardHeader, Avatar, Button, IconBut
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { red } from '@mui/material/colors';
-
+import './Forum.css'
 
 function CommentList() {
   const [comments, setComments] = useState([]);
@@ -125,7 +125,7 @@ function CommentList() {
   return (
     <div style={{ margin: '5%' }}>
       <Container>
-        <h3>Live Feed</h3>
+        <h3 id="liveFeed">Live Feed</h3>
         {comments.length === 0 ? (
           <p>No comments yet.</p>
         ) : (
