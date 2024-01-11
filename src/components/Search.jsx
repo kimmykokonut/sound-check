@@ -153,7 +153,7 @@ function Search() {
         <table>
           <thead>
             <tr>
-              <th>Artist Results</th>
+              <th></th>
               <th></th>
             </tr>
           </thead>
@@ -161,7 +161,7 @@ function Search() {
             {artists.map(artist => (
               <tr key={artist.id}>
                 <td> <img id='searchThumbnail' src={artist.images[0] ? artist.images[0].url : silhouette} alt='artist thumbnail' /></td>
-                <td>{artist.name}</td>
+                <td id="searchArtistName">{artist.name}</td>
                 <td>
                   <button id="searchFollowButton" className="button" onClick={() => handleButtonClick(artist.name)}>
                     {isFollowing(artist.name) ? 'Unfollow' : 'Follow'}

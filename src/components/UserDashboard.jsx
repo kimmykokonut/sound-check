@@ -158,13 +158,13 @@ export const UserDashboard = () => {
                         <tbody>
                             {artistArray.map((artist, index) => {
                                 const bandResult = results[index] || {};
-                                const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : 'N/A';
+                                const formattedDate = bandResult.startDate ? formatDate(bandResult.startDate) : '---';
                                 return followingArtists.includes(artist) ? (
                                     <tr key={index}>
                                         <td> <img id='artistThumbnail' src={bandResult.image ? bandResult.image : concert} alt='artist thumbnail' /></td>
                                         <td id='dashboardArtist'>{artist}</td>
                                         <td>{formattedDate}</td>
-                                        <td>{bandResult.location ? bandResult.location.name : 'N/A'}</td>
+                                        <td>{bandResult.location ? bandResult.location.name : '---'}</td>
                                         <td>
                                             <button className='button' onClick={() => handleUnfollow(artist)}>Unfollow</button>
                                         </td>

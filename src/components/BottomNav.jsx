@@ -40,9 +40,6 @@ export const SimpleBottomNavigation = () => {
       case 3:
         navigate('/userDashboard');
         break;
-      case 4:
-        navigate('/');
-        break;
       default:
         break;
     }
@@ -66,7 +63,6 @@ export const SimpleBottomNavigation = () => {
           <BottomNavigationAction icon={<ExploreIcon />} />
           <BottomNavigationAction icon={<ChatIcon />} />
           <BottomNavigationAction icon={<AccountCircleIcon />} />
-          <BottomNavigationAction icon={<KeyIcon />} />
         </BottomNavigation>
       </Box>
     </div>
