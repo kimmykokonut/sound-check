@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EditComment from "./EditComment";
 import { auth, db } from '../../firebase';
-import { collection, getDocs, doc, updateDoc, increment, setDoc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, increment, setDoc, getDoc, orderBy, query } from "firebase/firestore";
 
 function CommentList() {
   const [comments, setComments] = useState([]);
@@ -14,7 +14,9 @@ function CommentList() {
     const fetchData = async () => {
       try {
         const commentsCollection = collection(db, "post");
-        const commentsSnapshot = await getDocs(commentsCollection);
+        const commentsSnapshot = await getDocs(
+          query(commentsCollection, orderBy("timeStamp", "desc"))
+        );
 
         const fetchedComments = commentsSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -149,7 +151,7 @@ function CommentList() {
               <p>{comment.text}</p>
               <p>Posted By: {comment.userName}
                   <img
-                    src={comment.profilePic}
+                    src={comment.profilePic || comment.profileImage}
                     alt={`Profile of ${comment.userName}`}
                     style={{ marginLeft: '8px', borderRadius: '50%', width: '32px', height: '32px' }}
                   />
