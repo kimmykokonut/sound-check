@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail} from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail} from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
 import { geoStateIso } from "../city-state-data";
@@ -12,7 +12,6 @@ function SignIn() {
   const [signUpSuccess, setSignUpSuccess] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [signInSuccess, setSignInSuccess] = useState(null);
-  const [signOutSuccess, setSignOutSuccess] = useState(null);
   const [showSignUp, setShowSignUp] = useState(false);
   const [isSignInHidden, setIsSignInHidden] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
@@ -97,17 +96,6 @@ function SignIn() {
     }
   };
 
-  const doSignOut = async () => {
-    try {
-      await signOut(auth);
-      setIsSignedIn(false);
-      navigate('/');
-      setSignOutSuccess("You have successfully signed out!");
-    } catch (error) {
-      setSignOutSuccess(`There was an error signing out: ${error.message}!`);
-    }
-  };
-
   const doPasswordReset = async () => {
     try {
       await sendPasswordResetEmail(auth, resetEmail);
@@ -166,16 +154,6 @@ function SignIn() {
           )}
         </div>
       )}
-
-      <div id="signOutButton">
-        {!isSignedIn && (
-          <React.Fragment>
-            {signOutSuccess}
-            <br />
-            <button onClick={doSignOut}>Sign out</button>
-          </React.Fragment>
-        )}
-      </div>
 
       <h4 style={{ display: isCreateAccountTextHidden ? 'none' : 'block' }}> <hr />Don't have an account?
       </h4>
