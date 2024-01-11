@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail} from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
 import { geoStateIso } from "../city-state-data";
@@ -17,12 +17,16 @@ function SignIn() {
   const [isSignInHidden, setIsSignInHidden] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [isCreateAccountTextHidden, setIsCreateAccountTextHidden] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetSuccess, setResetSuccess] = useState(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate();
 
   const toggleSignInAndOutVisibility = () => {
     setShowSignUp(!showSignUp);
     setIsSignInHidden(!isSignInHidden);
     setIsCreateAccountTextHidden(!isCreateAccountTextHidden);
+    setShowForgotPassword(false);
   };
 
   const handleImageChange = (e) => {
@@ -104,11 +108,24 @@ function SignIn() {
     }
   };
 
+  const doPasswordReset = async () => {
+    try {
+      await sendPasswordResetEmail(auth, resetEmail);
+      setResetSuccess("Password reset email sent. Check your inbox!");
+    } catch (error) {
+      setResetSuccess(`Error sending reset email: ${error.message}`);
+    }
+  };
+
+  const toggleForgotPassword = () => {
+    setShowForgotPassword(!showForgotPassword);
+  };
+
   return (
     <React.Fragment>
-      {!isSignInHidden && !isSignedIn && <h1>Sign In</h1>}
+      {!isSignInHidden && !isSignedIn && !showForgotPassword && <h1>Sign In</h1>}
       {signInSuccess}
-      {!showSignUp && !isSignedIn && (
+      {!showSignUp && !isSignedIn && !showForgotPassword && (
         <form onSubmit={doSignIn}>
           <input
             type='text'
@@ -126,7 +143,32 @@ function SignIn() {
         </form>
       )}
 
-      {/* <div id="signOutButton">
+
+      {!isSignedIn && (
+        <div>
+          <br />
+          <p onClick={toggleForgotPassword}><a>Forgot Password?</a></p>
+          {showForgotPassword && (
+            <div>
+
+              <input
+                type="text"
+                name="resetEmail"
+                placeholder="Enter your email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+              />
+              <br />
+              <button type="button" onClick={doPasswordReset}>
+                Reset Password
+              </button>
+              {resetSuccess && <p>{resetSuccess}</p>}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div id="signOutButton">
         {!isSignedIn && (
           <React.Fragment>
             {signOutSuccess}
@@ -134,7 +176,7 @@ function SignIn() {
             <button onClick={doSignOut}>Sign out</button>
           </React.Fragment>
         )}
-      </div> */}
+      </div>
 
       <h4 style={{ display: isCreateAccountTextHidden ? 'none' : 'block' }}> <hr />Don't have an account?
       </h4>
@@ -170,6 +212,7 @@ function SignIn() {
             })};
           </select>
           <label>
+            <br />
             Profile Image:
             <input
               type="file"
@@ -177,6 +220,7 @@ function SignIn() {
               onChange={handleImageChange}
             />
           </label>
+          <br />
           <label>
             <input
               minLength="6"
