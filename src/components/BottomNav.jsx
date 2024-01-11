@@ -9,7 +9,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import KeyIcon from '@mui/icons-material/Key';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
-import { Key } from '@mui/icons-material';
+import { auth } from '../firebase';
 
 export const SimpleBottomNavigation = () => {
   const [value, setValue] = React.useState(0);
@@ -40,22 +40,26 @@ export const SimpleBottomNavigation = () => {
   };
 
   return (
-    <div id='navBar'>
-      <Box sx={{ width: 100 }}>
-        <BottomNavigation
-          showLabels
-          value={value}
-          onChange={(event, newValue) => {
-            handleNavigation(newValue);
-          }}
-        >
-          <BottomNavigationAction icon={<SearchIcon />} />
-          <BottomNavigationAction icon={<ExploreIcon />} />
-          <BottomNavigationAction icon={<ChatIcon />} />
-          <BottomNavigationAction icon={<AccountCircleIcon />} />
-          <BottomNavigationAction icon={<KeyIcon />} />
-        </BottomNavigation>
-      </Box>
-    </div >
+    <>
+      {auth.currentUser && (
+        <div id='navBar'>
+          <Box sx={{ width: 100 }}>
+            <BottomNavigation
+              showLabels
+              value={value}
+              onChange={(event, newValue) => {
+                handleNavigation(newValue);
+              }}
+            >
+              <BottomNavigationAction icon={<SearchIcon />} />
+              <BottomNavigationAction icon={<ExploreIcon />} />
+              <BottomNavigationAction icon={<ChatIcon />} />
+              <BottomNavigationAction icon={<AccountCircleIcon />} />
+              <BottomNavigationAction icon={<KeyIcon />} />
+            </BottomNavigation>
+          </Box>
+        </div>
+      )}
+    </>
   );
 };
