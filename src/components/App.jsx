@@ -14,20 +14,20 @@ import '../App.css'
 function App() {
   return (
     <>
-      <Router>
-        <Header />
-        <SimpleBottomNavigation />
-        <Routes>
-          <Route path="/" element={<SignIn />} />
-          <Route path="/browse" element={<Browse />} />
-          <Route path="/forum" element={<Forum />} />
-          <Route path="/Search" element={<Search />} />
-          <Route path="/userDashboard" element={<UserDashboard />} />
-        </Routes>
-        <Footer />
-
-      </Router>
-
+      <div id="content">
+        <Router>
+          <Header />
+          <SimpleBottomNavigation />
+          <Routes>
+            <Route path="/" element={<SignIn />} />
+            <Route path="/browse" element={<Browse />} />
+            <Route path="/forum" element={<Forum />} />
+            <Route path="/Search" element={<Search />} />
+            <Route path="/userDashboard" element={<UserDashboard />} />
+          </Routes>
+        </Router>
+      </div>
+      <Footer />
     </>
   );
 }

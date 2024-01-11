@@ -3,12 +3,13 @@
   margin-left: auto;
   margin-right: auto;
   width: 600px;
+  filter: brightness(0%);
 
 }
 
 body {
-  background: rgb(198, 255, 112);
-  background: linear-gradient(180deg, rgba(198, 255, 112, 1) 30%, rgba(64, 201, 162, 1) 69%, rgba(47, 156, 149, 1) 85%);
+  background: rgb(47, 156, 149);
+  background: linear-gradient(90deg, rgba(47, 156, 149, 1) 7%, rgba(198, 255, 112, 1) 22%, rgba(198, 255, 112, 1) 78%, rgba(47, 156, 149, 1) 93%);
 }
 
 #TESTCOLORS {
@@ -28,7 +29,7 @@ body {
 }
 
 #navBar button:hover {
-  transform: scale(1.3);
+  transform: scale(1.5);
 }
 
 #dashboard {
@@ -38,10 +39,11 @@ body {
 }
 
 #dashboardH1 {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   text-align: center;
 }
 
-#loadingImg {
+.loadingImg {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -57,4 +59,43 @@ table {
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
+}
+
+#flexChild {
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  background-color: #2f9c95;
+  margin-left: -8px;
+  width: 100vw;
+}
+
+#content {
+  margin-bottom: 30px;
+}
+
+#searchForm {
+  margin-top: 20px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#dashboardPic {
+  width: 50px;
+  border-radius: 50%;
+  margin-right: 0;
+  margin-bottom: -15px;
+}
+
+#dashboardUsername {
+  font-size: 16px;
+}
+
+#dashUserRow {
+  text-align: center;
+  font-size: 16px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
 }
