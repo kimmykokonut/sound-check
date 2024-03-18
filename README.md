@@ -1,5 +1,7 @@
 # Sound Check
 
+![Concerts by location page](./src/assets/page.png)
+
 See our application live [here](https://sound-check.netlify.app/)
 
 ## By Gabriel Tucker, Kim Robinson, Noah Kise, Monica Barboza, Zuri Gallegos
